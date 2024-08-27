@@ -1,23 +1,51 @@
 ---
 backup_settings:
-  wordpress:
-    user: wordpress
+  wordpress_prod:
+    user: wordpress_prod
     cron:
       hour: 1
-      minute: 23
+      minute: 11
     environment:
       DB_HOST: localhost
       DB_NAME: wordpress
       DB_USER: wordpress_db_user
       DB_PASSWORD: wordpress_db_password
     command: |
-      wp db export dump.sql --path /var/www/html
-      tar vcfz uploads.tar.gz /var/www/html/wp-content/uploads/
+      wp db export dump.sql --path /var/www/production
+      tar vcfz uploads.tar.gz /var/www/production/wp-content/uploads/
+    restic:
+      repo_password: very_very_5tr0ng_p@55w0rd
+  wordpress_stg:
+    user: wordpress_stg
+    cron:
+      hour: 2
+      minute: 22
+    environment:
+      DB_HOST: localhost
+      DB_NAME: wordpress_stg
+      DB_USER: wordpress_stg_db_user
+      DB_PASSWORD: wordpress_stg_db_password
+    command: |
+      wp db export dump.sql --path /var/www/staging
+      tar vcfz uploads.tar.gz /var/www/staging/wp-content/uploads/
+  wordpress_dev:
+    user: wordpress_dev
+    cron:
+      hour: 3
+      minute: 33
+    environment:
+      DB_HOST: localhost
+      DB_NAME: wordpress
+      DB_USER: wordpress_db_user
+      DB_PASSWORD: wordpress_db_password
+    command: |
+      wp db export dump.sql --path /var/www/develop
+      tar vcfz uploads.tar.gz /var/www/develop/wp-content/uploads/
   redmine:
     user: redmine
     cron:
-      hour: 2
-      minute: 34
+      hour: 4
+      minute: 44
     environment:
       DB_HOST: localhost
       DB_NAME: redmine
@@ -27,4 +55,17 @@ backup_settings:
       mysqldump -u ${DB_USER} -p${DB_PASSWORD} -h ${DB_HOST} --single-transaction ${DB_NAME} | gzip >dump.sql.gz
       tar vcfz files.tar.gz /path/to/redmine/files/
     restic:
-      repo_password: very_5tr0ng_p@55w0rd
+      repo_type: rclone
+      repo: "cloudflare_r2:backup/redmine"
+      repo_password: very_very_very_5tr0ng_p@55w0rd
+      forget_keep_type: last
+      forget_keep_value: 5
+    rclone:
+      cloudflare_r2:
+        type: s3
+        provider: Cloudflare
+        access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
+        secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
+        region: auto
+        bucket_acl: private
+        endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"

@@ -19,18 +19,32 @@
         path: ~/.config/rclone
         state: directory
         mode: "0755"
+    - name: Create/update rclone setting
+      ansible.builtin.blockinfile:
+        path: ~/.config/rclone/rclone.conf
+        content: |
+          {% for rclone_setting in setting.rclone | dict2items %}
+          [{{ rclone_setting.key }}]
+          {% for option_name, option_value in rclone_setting.value.items() %}
+          {{ option_name }} = {{ option_value }}
+          {% endfor %}
+          {% endfor %}
+        mode: "0600"
+        create: true
+      no_log: true
 - name: Generate backup script
   ansible.builtin.template:
     src: backup.sh.j2
     dest: "{{ backup_script_dir }}/{{ setting_name }}"
     owner: "{{ setting.user }}"
     mode: "0700"
-  register: template_result
+  no_log: true
+  register: backup_script_result
 - name: Set backup cron jobs
   ansible.builtin.cron:
     user: "{{ setting.user }}"
     name: "role:backup/setting:{{ setting_name }}"
-    job: "{{ template_result.dest }}"
+    job: "{{ backup_script_result.dest }}"
     month: "{{ setting.cron.month | default(omit) }}"
     day: "{{ setting.cron.day | default(omit) }}"
     hour: "{{ setting.cron.hour | default(omit) }}"
