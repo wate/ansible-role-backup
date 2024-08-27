@@ -1,0 +1,11 @@
+# code: language=ansible
+---
+- name: Install cron
+  ansible.builtin.apt:
+    name: cron
+- name: Install rclone
+  ansible.builtin.include_tasks:
+    file: dependency/rclone.yml
+- name: Install restic
+  ansible.builtin.include_tasks:
+    file: dependency/restic.yml

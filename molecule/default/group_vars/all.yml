@@ -1,0 +1,32 @@
+---
+backup_settings:
+  wordpress:
+    user: aaaaa
+    cron:
+      hour: 2
+      minute: 15
+    command: |
+      NOW=$(date +'%Y%m%d%H%M%S')
+      mysqldump db_name
+      tar vcfz ${NOW}.tar.gz /path/to/target_dir
+    restic:
+      ## バックアップ対象のディレクトリ
+      ## (※省略時は「{{ backup_data_base_dir }}/{{ backup_setting.key }}」となる)
+      target: "{{ backup_data_base_dir }}/wordpress"
+      repo_type: rclone
+      ## 世代管理を行うリポジトリのパス
+      ## (※省略時は「{{ backup_repo_base_dir }}/{{ backup_setting.key }}」)
+      repo_path: "{{ backup_repo_base_dir }}/wordpress"
+      ## リポジトリのパスワード
+      repo_password: very_5tr0ng_pa55w0rd
+      ## その他、環境変数
+      environment: {}
+      ## `restic init`実行時のオプション
+      init_options: []
+      ## `restic backup`実行時のオプション
+      backup_options: []
+      ## `restic forget`実行時の--keep-*オプションの種別
+      forget_keep_type: daily
+      ## `restic forget`実行時の--keep-*オプションの値
+      forget_keep_value: 3
+    rclone: {}

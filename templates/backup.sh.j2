@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+export BACKUP_NAME="{{ setting_name }}"
+export BACKUP_DATA_DIR="{{ backup_data_dir }}/{{ setting_name }}"
+export BACKUP_REPO_DIR="{{ backup_repo_dir }}/{{ setting_name }}"
+
+{% if setting.command is defined -%}
+## データのバックアップ
+## ---------------------------------
+
+{{ setting.command }}
+
+{% endif %}
