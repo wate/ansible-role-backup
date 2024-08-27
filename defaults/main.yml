@@ -46,7 +46,6 @@ backup_settings: {}
   #     ## (※省略時：{{ backup_restic_forget_default_keep_value }})
   #     # forget_keep_value: 3
   #   ## rcloneの設定
-  #   ## (restic + rcloneでの外部ストレージを利用したバックアップデータの世代管理)
   #   # rclone:
   #   #   cloudflare_r2:
   #   #     type: s3

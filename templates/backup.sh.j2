@@ -58,7 +58,7 @@ fi
 {% set restic_backup_options = restic_backup_options + restic_setting.backup_options -%}
 {% endif %}
 {% set restic_backup_target = setting.target | default(backup_data_dir + '/' + setting_name) -%}
-# restic backup {{ restic_backup_options | join(' ') }} "{{ restic_backup_target }}"
+# restic backup "{{ restic_backup_target }}" {{ restic_backup_options | join(' ') }}
 
 ### スナップショットのクリーンアップ
 {% set restic_forget_options = backup_restic_forget_common_options | default([]) %}
