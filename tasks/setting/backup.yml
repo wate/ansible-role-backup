@@ -3,6 +3,19 @@
   ansible.builtin.set_fact:
     setting_name: "{{ backup_setting.key }}"
     setting: "{{ backup_setting.value }}"
+- name: Assert restic setting
+  when: setting.restic is defined
+  block:
+    - name: Set test variables
+      ansible.builtin.set_fact:
+        restic_repo_type: "{{ setting.restic.repo_type | default(backup_restic_default_repo_type) }}"
+        restic_forget_keep_type: "{{ setting.restic.forget_keep_type | default(backup_restic_forget_default_keep_type) }}"
+    - name: Assert restic setting
+      ansible.builtin.assert:
+        that:
+          - restic_repo_type in restic_allow_repo_types
+          - restic_forget_keep_type in restic_allow_forget_keep_types
+        quiet: true
 - name: Create backup data directory
   ansible.builtin.file:
     path: "{{ backup_data_dir }}/{{ setting_name }}"
@@ -43,7 +56,7 @@
 - name: Set backup cron jobs
   ansible.builtin.cron:
     user: "{{ setting.user }}"
-    name: "role:backup/setting:{{ setting_name }}"
+    name: role:backup/setting:{{ setting_name }}
     job: "{{ backup_script_result.dest }}"
     month: "{{ setting.cron.month | default(omit) }}"
     day: "{{ setting.cron.day | default(omit) }}"

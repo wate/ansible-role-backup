@@ -1,2 +1,24 @@
 ---
+## -----------------
+## リポジトリ種別の選択肢
+## -----------------
+restic_allow_repo_types:
+  - local
+  - sftp
+  - rest
+  - s3
+  - swift
+  - azure
+  - gs
+  - rclone
 
+## -----------------
+## 世代数の管理方法の選択肢
+## -----------------
+restic_allow_forget_keep_types:
+  - last
+  - hourly
+  - daily
+  - weekly
+  - monthly
+  - yearly

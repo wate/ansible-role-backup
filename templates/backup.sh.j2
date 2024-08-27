@@ -29,7 +29,7 @@ cd "${BASE_DIR}"
 ## バックアップデータの世代管理
 ## ---------------------------------
 {% set restic_setting = setting.restic -%}
-{% set restic_repo_type = restic_setting.repo_type | default('local') | lower %}
+{% set restic_repo_type = restic_setting.repo_type | default(backup_restic_default_repo_type) | lower %}
 {% set restic_repo = restic_setting.repo | default(backup_repo_dir + '/' + setting_name) -%}
 {% if restic_repo_type != 'local' -%}
 {% set restic_repo = restic_repo_type + ':' + restic_repo -%}
