@@ -1,32 +1,30 @@
 ---
 backup_settings:
   wordpress:
-    user: aaaaa
+    user: wordpress
+    cron:
+      hour: 1
+      minute: 23
+    environment:
+      DB_HOST: localhost
+      DB_NAME: wordpress
+      DB_USER: wordpress_db_user
+      DB_PASSWORD: wordpress_db_password
+    command: |
+      wp db export dump.sql --path /var/www/html
+      tar vcfz uploads.tar.gz /var/www/html/wp-content/uploads/
+  redmine:
+    user: redmine
     cron:
       hour: 2
-      minute: 15
+      minute: 34
+    environment:
+      DB_HOST: localhost
+      DB_NAME: redmine
+      DB_USER: redmine_db_user
+      DB_PASSWORD: redmine_db_password
     command: |
-      NOW=$(date +'%Y%m%d%H%M%S')
-      mysqldump db_name
-      tar vcfz ${NOW}.tar.gz /path/to/target_dir
+      mysqldump -u ${DB_USER} -p${DB_PASSWORD} -h ${DB_HOST} --single-transaction ${DB_NAME} | gzip >dump.sql.gz
+      tar vcfz files.tar.gz /path/to/redmine/files/
     restic:
-      ## バックアップ対象のディレクトリ
-      ## (※省略時は「{{ backup_data_base_dir }}/{{ backup_setting.key }}」となる)
-      target: "{{ backup_data_base_dir }}/wordpress"
-      repo_type: rclone
-      ## 世代管理を行うリポジトリのパス
-      ## (※省略時は「{{ backup_repo_base_dir }}/{{ backup_setting.key }}」)
-      repo_path: "{{ backup_repo_base_dir }}/wordpress"
-      ## リポジトリのパスワード
-      repo_password: very_5tr0ng_pa55w0rd
-      ## その他、環境変数
-      environment: {}
-      ## `restic init`実行時のオプション
-      init_options: []
-      ## `restic backup`実行時のオプション
-      backup_options: []
-      ## `restic forget`実行時の--keep-*オプションの種別
-      forget_keep_type: daily
-      ## `restic forget`実行時の--keep-*オプションの値
-      forget_keep_value: 3
-    rclone: {}
+      repo_password: very_5tr0ng_p@55w0rd

@@ -5,49 +5,32 @@
     state: directory
     owner: "{{ backup_setting.value.user }}"
     mode: "0750"
+- name: Set template variables
+  ansible.builtin.set_fact:
+    setting_name: "{{ backup_setting.key }}"
+    setting: "{{ backup_setting.value }}"
+- name: Generate backup script
+  ansible.builtin.template:
+    src: backup.sh.j2
+    dest: "{{ backup_script_dir }}/{{ setting_name }}"
+    owner: "{{ backup_setting.value.user }}"
+    mode: "0700"
+- name: Create/update rclone setting
+  when: backup_setting.rclone is defined
+  become: true
+  become_user: "{{ backup_setting.user }}"
+  block:
+    - name: Create rclone config directory
+      ansible.builtin.file:
+        path: ~/.config/rclone
+        state: directory
+        mode: "0755"
 - name: Generate backup script
   ansible.builtin.template:
     src: backup.sh.j2
     dest: "{{ backup_script_dir }}/{{ backup_setting.key }}"
     owner: "{{ backup_setting.value.user }}"
-    mode: "0700"
-  vars:
-    setting_name: "{{ backup_setting.key }}"
-    setting: "{{ backup_setting.value }}"
-# - name: Create backup data directory
-
-# - name: Create/update rclone setting
-#   when: setting.rclone is defined
-#   become: true
-#   become_user: "{{ setting.user }}"
-#   block:
-#     - name: Create rclone config directory
-#       ansible.builtin.file:
-#         path: ~/.config/rclone
-#         state: directory
-#         mode: "0755"
-#     - name: Create/update rclone setting
-#       ansible.builtin.debug:
-#         var: rclone_setting
-#       # community.general.ini_file:
-#       #   path: ~/.config/rclone/rclone.conf
-#       #   section:
-#       #   option:
-#       #   value:
-#       #   mode: "0600"
-#       #   create: true
-#       loop: "{{ backup_setting.value.rclone | dict2items }}"
-#       loop_control:
-#         loop_var: rclone_setting
-
-
-# - name: Generate backup script
-#   ansible.builtin.template:
-#     src: backup.sh.j2
-#     dest: "{{ backup_script_dir }}/{{ backup_setting.key }}"
-#     owner: "{{ backup_setting.value.user }}"
-#     group: "{{ backup_setting.value.user | default(omit) }}"
-#     mode: "0750"
+    mode: "0750"
 # - name: Set backup cron jobs
 #   ansible.builtin.cron:
 #     user: "{{ backup_setting.value.user }}"

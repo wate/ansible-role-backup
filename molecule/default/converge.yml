@@ -19,6 +19,13 @@
     - name: Install vim
       ansible.builtin.apt:
         name: vim
+    - name: Create user
+      ansible.builtin.user:
+        name: "{{ backup.value.user }}"
+      loop: "{{ backup_settings | dict2items }}"
+      loop_control:
+        loop_var: backup
+        label: "{{ backup.value.user }}"
     - name: Include role
       ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
