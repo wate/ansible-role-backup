@@ -50,11 +50,11 @@ backup_settings: {}
   #   #   cloudflare_r2:
   #   #     type: s3
   #   #     provider: Cloudflare
-  #   #     access_key_id: "{{ lookkup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
-  #   #     secret_access_key: "{{ lookkup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
+  #   #     access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
+  #   #     secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
   #   #     region: auto
   #   #     bucket_acl: private
-  #   #     endpoint: "{{ lookkup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
+  #   #     endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
 
 ## ----------------
 ## `restic init`実行時の共通オプション
