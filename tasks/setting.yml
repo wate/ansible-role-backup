@@ -10,14 +10,10 @@
     - "{{ backup_script_dir }}"
     - "{{ backup_data_dir }}"
     - "{{ backup_repo_dir }}"
-
-
 - name: Setup backup setting
-  ansible.builtin.debug:
-    var: backup_settings
-  # ansible.builtin.include_tasks:
-  #   file: setting/backup.yml
-  # loop: "{{ backup_settings | dict2items(key_name='name', value_name='setting') }}"
-  # loop_control:
-  #   loop_var: backup_setting
-  #   label: "{{ backup_setting.name }}"
+  ansible.builtin.include_tasks:
+    file: setting/backup.yml
+  loop: "{{ backup_settings | dict2items }}"
+  loop_control:
+    loop_var: backup_setting
+    label: "{{ backup_setting.key }}"

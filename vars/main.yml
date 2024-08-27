@@ -1,11 +1,2 @@
 ---
-backup_dependency_packages: []
 
-# backup_apt_key_url: https://packages.repository.com/backup.gpg
-# backup_apt_key_dest: /usr/share/keyrings/backup.gpg
-
-# backup_repo: owner_name/repo_name
-
-backup_home: /opt/backup
-backup_user: backup
-backup_group: backup

@@ -18,10 +18,8 @@
 - name: Import dependency task
   ansible.builtin.import_tasks:
     file: dependency.yml
-  tags:
-    - role_backup_dependency
+  tags: role_backup_dependency
 - name: Import setting task
   ansible.builtin.import_tasks:
     file: setting.yml
-  tags:
-    - role_backup_setting
+  tags: role_backup_setting
