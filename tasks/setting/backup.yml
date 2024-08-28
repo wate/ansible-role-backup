@@ -4,9 +4,19 @@
     setting_name: "{{ backup_setting.key }}"
     setting: "{{ backup_setting.value }}"
 - name: Assert restic setting
+  ansible.builtin.assert:
+    that: setting.cron in defined
+    quiet: true
+- name: Create backup data directory
+  ansible.builtin.file:
+    path: "{{ backup_data_dir }}/{{ setting_name }}"
+    state: directory
+    owner: "{{ setting.user }}"
+    mode: "0750"
+- name: restic setting
   when: setting.restic is defined
   block:
-    - name: Set test variables
+    - name: Set setting variables
       ansible.builtin.set_fact:
         restic_repo_type: "{{ setting.restic.repo_type | default(backup_restic_default_repo_type) }}"
         restic_forget_keep_type: "{{ setting.restic.forget_keep_type | default(backup_restic_forget_default_keep_type) }}"
@@ -16,12 +26,15 @@
           - restic_repo_type in restic_allow_repo_types
           - restic_forget_keep_type in restic_allow_forget_keep_types
         quiet: true
-- name: Create backup data directory
-  ansible.builtin.file:
-    path: "{{ backup_data_dir }}/{{ setting_name }}"
-    state: directory
-    owner: "{{ setting.user }}"
-    mode: "0750"
+    - name: Create backup repository directory
+      ansible.builtin.file:
+        path: "{{ backup_repo_dir }}/{{ setting_name }}"
+        state: directory
+        owner: "{{ setting.user }}"
+        mode: "0750"
+      when:
+        - setting.restic.target is undefined
+        - restic_repo_type == 'local'
 - name: Create/update rclone setting
   when: setting.rclone is defined
   become: true
