@@ -16,9 +16,6 @@
       when: ansible_facts.pkg_mgr == 'dnf'
       changed_when: false
   tasks:
-    - name: Install vim
-      ansible.builtin.apt:
-        name: vim
     - name: Create user
       ansible.builtin.user:
         name: "{{ backup.value.user }}"
