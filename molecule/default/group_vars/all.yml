@@ -1,65 +1,50 @@
 ---
 backup_settings:
-  wordpress_prod:
-    user: wordpress_prod
+  ## バックアップ処理の指定：無し、バックアップデータの世代管理：無し
+  test_command_undefined:
+    user: command_undefined
     cron:
       hour: 1
-      minute: 11
-    environment:
-      DB_HOST: localhost
-      DB_NAME: wordpress
-      DB_USER: wordpress_db_user
-      DB_PASSWORD: wordpress_db_password
+      minute: 23
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
+  test_command_only:
+    user: command_only
+    cron:
+      hour: 1
+      minute: 23
     command: |
-      wp db export dump.sql --path /var/www/production
-      tar vcfz uploads.tar.gz /var/www/production/wp-content/uploads/
+      echo "test_command_only" >${BACLUP_DATA_DIR}/test.txt
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+  test_restic_default:
+    user: restic_default
+    cron:
+      hour: 1
+      minute: 23
+    command: echo "test_restic_default" >${BACLUP_DATA_DIR}/test.txt
+    restic: {}
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+  ## keepパラメーターの指定による世代数の指定有り
+  test_restic_forget_keep_param:
+    user: restic_forget_keep_param
+    cron:
+      hour: 1
+      minute: 23
+    command: echo "test_restic_forget_keep_param" >${BACLUP_DATA_DIR}/test.txt
     restic:
-      repo_password: very_very_5tr0ng_p@55w0rd
-  wordpress_stg:
-    user: wordpress_stg
+      keep_type: last
+      keep_value: 5
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+  ## 外部ストレージ(rclone経由)を利用した世代管理の指定
+  test_restic_and_rclone:
+    user: restic_and_rclone
     cron:
-      hour: 2
-      minute: 22
-    environment:
-      DB_HOST: localhost
-      DB_NAME: wordpress_stg
-      DB_USER: wordpress_stg_db_user
-      DB_PASSWORD: wordpress_stg_db_password
-    command: |
-      wp db export dump.sql --path /var/www/staging
-      tar vcfz uploads.tar.gz /var/www/staging/wp-content/uploads/
-  wordpress_dev:
-    user: wordpress_dev
-    cron:
-      hour: 3
-      minute: 33
-    environment:
-      DB_HOST: localhost
-      DB_NAME: wordpress
-      DB_USER: wordpress_db_user
-      DB_PASSWORD: wordpress_db_password
-    command: |
-      wp db export dump.sql --path /var/www/develop
-      tar vcfz uploads.tar.gz /var/www/develop/wp-content/uploads/
-  redmine:
-    user: redmine
-    cron:
-      hour: 4
-      minute: 44
-    environment:
-      DB_HOST: localhost
-      DB_NAME: redmine
-      DB_USER: redmine_db_user
-      DB_PASSWORD: redmine_db_password
-    command: |
-      mysqldump -u ${DB_USER} -p${DB_PASSWORD} -h ${DB_HOST} --single-transaction ${DB_NAME} | gzip >dump.sql.gz
-      tar vcfz files.tar.gz /path/to/redmine/files/
+      hour: 1
+      minute: 23
+    command: echo "test_restic_and_rclone" >${BACLUP_DATA_DIR}/test.txt
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:backup/redmine
+      repo: cloudflare_r2:test/test_restic_and_rclone
       repo_password: very_very_very_5tr0ng_p@55w0rd
-      forget_keep_type: last
-      forget_keep_value: 5
     rclone:
       cloudflare_r2:
         type: s3
@@ -69,3 +54,47 @@ backup_settings:
         region: auto
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
+  # ## 実例のサンプル
+  # wordpress:
+  #   user: wordpress
+  #   cron:
+  #     hour: 2
+  #     minute: 22
+  #   environment:
+  #     DB_HOST: localhost
+  #     DB_NAME: wordpress
+  #     DB_USER: wordpress_db_user
+  #     DB_PASSWORD: wordpress_db_password
+  #   command: |
+  #     wp db export ${BACLUP_DATA_DIR}/dump.sql --path /var/www/wordpress
+  #     tar vcfz uploads.tar.gz /var/www/wordpress/wp-content/uploads/
+  #   restic:
+  #     repo_password: very_very_5tr0ng_p@55w0rd
+  # redmine:
+  #   user: redmine
+  #   cron:
+  #     hour: 3
+  #     minute: 33
+  #   environment:
+  #     DB_HOST: localhost
+  #     DB_NAME: redmine
+  #     DB_USER: redmine_db_user
+  #     DB_PASSWORD: redmine_db_password
+  #   command: |
+  #     mysqldump -u ${DB_USER} -p${DB_PASSWORD} -h ${DB_HOST} --single-transaction ${DB_NAME} | gzip >dump.sql.gz
+  #     tar vcfz files.tar.gz /path/to/redmine/files/
+  #   restic:
+  #     repo_type: rclone
+  #     repo: cloudflare_r2:test/redmine
+  #     repo_password: very_very_very_5tr0ng_p@55w0rd
+  #     keep_type: weekly
+  #     keep_value: 2
+  #   rclone:
+  #     cloudflare_r2:
+  #       type: s3
+  #       provider: Cloudflare
+  #       access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
+  #       secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
+  #       region: auto
+  #       bucket_acl: private
+  #       endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
