@@ -23,6 +23,30 @@
       loop_control:
         loop_var: backup
         label: "{{ backup.value.user }}"
+    - name: Generate dummy data
+      become: true
+      become_user: restic_only
+      block:
+        - name: Create backup target directory
+          ansible.builtin.file:
+            path: /home/restic_only/dummy
+            state: directory
+            mode: "0700"
+        - name: generate dummy file
+          ansible.builtin.command:
+            cmd: rclone test makefiles /home/restic_only/dummy
+    - name: Generate dummy data
+      become: true
+      become_user: restic_only_with_rclone
+      block:
+        - name: Create backup target directory
+          ansible.builtin.file:
+            path: /home/restic_only_with_rclone/dummy
+            state: directory
+            mode: "0700"
+        - name: generate dummy file
+          ansible.builtin.command:
+            cmd: rclone test makefiles /home/restic_only_with_rclone/dummy
     - name: Include role
       ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
