@@ -59,7 +59,7 @@ restic backup "{{ restic_backup_target }}" {{ restic_backup_options | join(' ') 
 ### スナップショットのクリーンアップ
 {% set restic_forget_options = backup_restic_forget_common_options | default([]) %}
 {% set restic_keep_type = restic_setting.keep_type | default(backup_restic_default_keep_type) -%}
-{% set restic_keep_value = restic_setting.eep_value | default(backup_restic_default_keep_value) | string -%}
+{% set restic_keep_value = restic_setting.keep_value | default(backup_restic_default_keep_value) | string -%}
 {% set restic_keep_param = '--keep-' + restic_keep_type + ' ' + restic_keep_value -%}
 {% set restic_forget_options = restic_forget_options + [restic_keep_param] %}
 restic forget {{ restic_forget_options | join(' ') }}
