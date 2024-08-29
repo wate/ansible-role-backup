@@ -5,7 +5,7 @@
     setting: "{{ backup_setting.value }}"
 - name: Assert restic setting
   ansible.builtin.assert:
-    that: setting.cron in defined
+    that: setting.cron is defined
     quiet: true
 - name: Create backup data directory
   ansible.builtin.file:

@@ -19,67 +19,51 @@
       ansible.builtin.set_fact:
         listen_tcp_posts: "{{ ansible_facts.tcp_listen | map(attribute='port') | unique | sort | list }}"
         listen_udp_posts: "{{ ansible_facts.udp_listen | map(attribute='port') | unique | sort | list }}"
-    # ## パッケージのテスト
-    # - name: Assert package
-    #   ansible.builtin.assert:
-    #     that:
-    #       - ansible_facts.packages['package'] is defined
-    # ## ユーザーのテスト
-    # - name: Test user
+    - name: Assert packages
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.packages['rclone'] is defined
+          - ansible_facts.packages['restic'] is defined
+    - name: Test command undefined
+      become: true
+      become_user: command_undefined
+      block:
+        - name: Check backup script
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_command_undefined"
+          register: backup_script_result
+        - name: Assert backup script
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'command_undefined'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_command_undefined"
+          register: backup_data_dir_result
+        - name: Assert backup dir
+          ansible.builtin.assert:
+            that:
+              - backup_data_dir_result.stat.exists
+              - backup_data_dir_result.stat.isdir
+              - backup_data_dir_result.stat.writeable
+              - backup_data_dir_result.stat.pw_name == 'command_undefined'
+        - name: Check
+          ansible.builtin.lineinfile:
+            path: "{{ backup_script_dir }}/test_command_undefined"
+            line: "## バックアップ処理"
+          register: lineinfile_result
+          check_mode: true
+        - name: Assert backup dir
+          ansible.builtin.assert:
+            that: lineinfile_result is changed
+    # - name: Test command only
     #   block:
-    #     - name: Check user
-    #       ansible.builtin.user:
-    #         name: www-data
-    #         system: true
-    #       check_mode: true
-    #       register: user_result
-    #     - name: Assert user
-    #       ansible.builtin.assert:
-    #         that:
-    #           - user_result is not changed
-    # ## グループのテスト
-    # - name: Test group
+    # - name: Test restic default
     #   block:
-    #     - name: Check group
-    #       ansible.builtin.group:
-    #         name: www-data
-    #         system: true
-    #       check_mode: true
-    #       register: group_result
-    #     - name: Assert group
-    #       ansible.builtin.assert:
-    #         that:
-    #           - group_result is not changed
-    # ## ファイルのテスト
-    # - name: Test file
+    # - name: Test restic forget keep param
     #   block:
-    #     - name: Check virtualhost setting
-    #       ansible.builtin.stat:
-    #         path: /etc/nginx/sites-available/default
-    #       register: result
-    #     - name: Assert file
-    #       ansible.builtin.assert:
-    #         that:
-    #           - result.stat.exists
-    #     - name: Check virtualhost enabled
-    #       ansible.builtin.stat:
-    #         path: /etc/nginx/sites-enabled/default
-    #       register: result
-    #     - name: Assert file
-    #       ansible.builtin.assert:
-    #         that:
-    #           - result.stat.exists
-    #           - result.stat.islnk
-    #           - result.stat.lnk_source == '/etc/nginx/sites-available/default'
-    ## サービスのテスト
-    # - name: Assert service
-    #   ansible.builtin.assert:
-    #     that:
-    #       - ansible_facts.services['package.service'] is defined
-    #       - ansible_facts.services['package.service']['state'] == 'running'
-    #       - ansible_facts.services['package.service']['status'] == 'enabled'
-    # ## 待受ポートのテスト
-    # - name: Assert listen port
-    #   ansible.builtin.assert:
-    #     that:
-    #       - 123456 in listen_tcp_posts
+    # - name: Test restic and rclone
+    #   block:
