@@ -13,14 +13,14 @@ backup_settings:
       hour: 1
       minute: 23
     command: |
-      echo test_command_only >${BACLUP_DATA_DIR}/test.txt
+      echo test_command_only >${BACKUP_DATA_DIR}/test.txt
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   test_restic_default:
     user: restic_default
     cron:
       hour: 1
       minute: 23
-    command: echo test_restic_default >${BACLUP_DATA_DIR}/test.txt
+    command: echo test_restic_default >${BACKUP_DATA_DIR}/test.txt
     restic: {}
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## keepパラメーターの指定による世代数の指定有り
@@ -29,7 +29,7 @@ backup_settings:
     cron:
       hour: 1
       minute: 23
-    command: echo test_restic_forget_keep_param >${BACLUP_DATA_DIR}/test.txt
+    command: echo test_restic_forget_keep_param >${BACKUP_DATA_DIR}/test.txt
     restic:
       keep_type: last
       keep_value: 5
@@ -40,7 +40,7 @@ backup_settings:
     cron:
       hour: 1
       minute: 23
-    command: echo test_restic_and_rclone >${BACLUP_DATA_DIR}/test.txt
+    command: echo test_restic_and_rclone >${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_type: rclone
       repo: cloudflare_r2:test/test_restic_and_rclone
@@ -66,7 +66,7 @@ backup_settings:
   #     DB_USER: wordpress_db_user
   #     DB_PASSWORD: wordpress_db_password
   #   command: |
-  #     wp db export ${BACLUP_DATA_DIR}/dump.sql --path /var/www/wordpress
+  #     wp db export ${BACKUP_DATA_DIR}/dump.sql --path /var/www/wordpress
   #     tar vcfz uploads.tar.gz /var/www/wordpress/wp-content/uploads/
   #   restic:
   #     repo_password: very_very_5tr0ng_p@55w0rd
