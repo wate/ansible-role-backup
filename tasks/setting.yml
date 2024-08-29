@@ -15,5 +15,5 @@
     file: setting/backup.yml
   loop: "{{ backup_settings | dict2items }}"
   loop_control:
-    loop_var: backup_setting
-    label: "{{ backup_setting.key }}"
+    loop_var: backup_cfg
+    label: "{{ backup_cfg.key }}"

@@ -2,7 +2,7 @@
 galaxy_info:
   role_name: backup
   author: yoshiaki tanaka
-  description: Setup backup setting(work in progress)
+  description: Setup backup setting(alpha)
   license: Apache
   min_ansible_version: "2.16"
   platforms:
