@@ -4,6 +4,11 @@
   hosts: all
   gather_facts: false
   become: true
+  vars:
+    backup_base_dir: /backup
+    backup_script_dir: "{{ backup_base_dir }}/script"
+    backup_data_dir: "{{ backup_base_dir }}/data"
+    backup_repo_dir: "{{ backup_base_dir }}/repo"
   tasks:
     ## テストの前処理
     - name: Gather package facts
@@ -50,17 +55,53 @@
               - backup_data_dir_result.stat.isdir
               - backup_data_dir_result.stat.writeable
               - backup_data_dir_result.stat.pw_name == 'command_undefined'
-        - name: Check
-          ansible.builtin.lineinfile:
-            path: "{{ backup_script_dir }}/test_command_undefined"
-            line: "## バックアップ処理"
-          register: lineinfile_result
-          check_mode: true
+        - name: Check test_command_undefined backup command section
+          ansible.builtin.command:
+            cmd: grep "## バックアップ処理" "{{ backup_script_dir }}/test_command_undefined"
+          failed_when: grep_result.rc > 1
+          changed_when: false
+          register: grep_result
+        - name: Assert backup command section
+          ansible.builtin.assert:
+            that: grep_result.rc == 1
+    - name: Test command only
+      become: true
+      become_user: command_only
+      block:
+        - name: Check backup script
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_command_only"
+          register: backup_script_result
+        - name: Assert backup script
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'command_only'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_command_only"
+          register: backup_data_dir_result
         - name: Assert backup dir
           ansible.builtin.assert:
-            that: lineinfile_result is changed
-    # - name: Test command only
-    #   block:
+            that:
+              - backup_data_dir_result.stat.exists
+              - backup_data_dir_result.stat.isdir
+              - backup_data_dir_result.stat.writeable
+              - backup_data_dir_result.stat.pw_name == 'command_only'
+        - name: Check test_command_only backup command section
+          ansible.builtin.command:
+            cmd: grep "echo test_command_only >" "{{ backup_script_dir }}/test_command_only"
+          failed_when: grep_result.rc > 1
+          changed_when: false
+          register: grep_result
+        - name: Debug
+          ansible.builtin.debug:
+            var: grep_result
+        - name: Assert test_command_only backup command
+          ansible.builtin.assert:
+            that: grep_result.rc == 0
     # - name: Test restic default
     #   block:
     # - name: Test restic forget keep param
