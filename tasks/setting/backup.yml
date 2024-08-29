@@ -26,6 +26,12 @@
           - restic_repo_type in restic_allow_repo_types
           - restic_forget_keep_type in restic_allow_forget_keep_types
         quiet: true
+    - name: Assert restic repository password:{{ backup_setting_name }}
+      ansible.builtin.assert:
+        that:
+          - backup_setting.restic.repo_password is defined
+          - backup_setting.restic.repo_password | length >= 8
+        quiet: true
     - name: Create backup repository directory:{{ backup_setting_name }}
       ansible.builtin.file:
         path: "{{ backup_repo_dir }}/{{ backup_setting_name }}"
@@ -64,6 +70,7 @@
     dest: "{{ backup_script_dir }}/{{ backup_setting_name }}"
     owner: "{{ backup_setting.user }}"
     mode: "0700"
+  no_log: true
 - name: Set backup cron jobs:{{ backup_setting_name }}
   ansible.builtin.cron:
     user: "{{ backup_setting.user }}"

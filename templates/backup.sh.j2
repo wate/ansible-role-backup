@@ -32,15 +32,10 @@ cd "${BASE_DIR}"
 {% set restic_backup_target = restic_setting.target | default(backup_data_dir + '/' + backup_setting_name) -%}
 {% set restic_repo_type = restic_setting.repo_type | default(backup_restic_default_repo_type) | lower %}
 {% set restic_repo = restic_setting.repo | default(backup_repo_dir + '/' + backup_setting_name) -%}
-{% if restic_repo_type != 'local' -%}
-{% set restic_repo = restic_repo_type + ':' + restic_repo -%}
-{% endif %}
 ### リポジトリ
-export RESTIC_REPOSITORY="{{ restic_repo }}"
-{% if restic_setting.repo_password is defined -%}
+export RESTIC_REPOSITORY="{{ (restic_repo_type == 'local') | ternary(restic_repo, restic_repo_type + ':' + restic_repo) }}"
 ### リポジトリのパスワード
 export RESTIC_PASSWORD="{{ restic_setting.repo_password }}"
-{% endif %}
 ### リポジトリのチェック及び初期化
 {% set restic_init_options = backup_restic_init_common_options | default([]) %}
 {% if backup_setting.init_options is defined -%}
@@ -48,6 +43,11 @@ export RESTIC_PASSWORD="{{ restic_setting.repo_password }}"
 {% endif %}
 {% if restic_repo_type == 'local' -%}
 if [ ! -e "${RESTIC_REPOSITORY}/config" ]; then
+  restic init {{ restic_init_options | join(' ') }}
+fi
+{% elif restic_repo_type == 'rclone' -%}
+RCLONE_CAT_RESULT=$(rclone cat "{{ restic_repo }}/config")
+if [ -z "${RCLONE_CAT_RESULT}" ]; then
   restic init {{ restic_init_options | join(' ') }}
 fi
 {% endif %}
