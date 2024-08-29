@@ -1,7 +1,7 @@
 backup
 =================
 
-Setup backup setting(work in progress)
+Setup backup setting(alpha)
 
 OS Platform
 -----------------
@@ -42,13 +42,13 @@ Role Variables
 ※設定値の値は「vars/main.yml」の「restic_allow_repo_types」変数を参照  
 @see https://restic.readthedocs.io/en/stable/030_preparing_a_new_repo.html
 
-### `backup_restic_forget_default_keep_type`
+### `backup_restic_default_keep_type`
 
 世代数の管理方法の初期値  
 ※設定値の値は「vars/main.yml」の「restic_allow_forget_keep_types」変数を参照  
 @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 
-### `backup_restic_forget_default_keep_value`
+### `backup_restic_default_keep_value`
 
 世代数の初期値
 
