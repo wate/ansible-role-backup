@@ -46,7 +46,11 @@ export RESTIC_PASSWORD="{{ restic_setting.repo_password }}"
 {% if backup_setting.init_options is defined -%}
 {% set restic_init_options = restic_init_options + backup_setting.init_options %}
 {% endif %}
-restic check || restic init {{ restic_init_options | join(' ') }}
+{% if restic_repo_type == 'local' -%}
+if [ ! -e "${RESTIC_REPOSITORY}/config" ]; then
+  restic init {{ restic_init_options | join(' ') }}
+fi
+{% endif %}
 
 ### スナップショットの作成
 {% set restic_backup_options = restic_backup_common_options | default([]) -%}

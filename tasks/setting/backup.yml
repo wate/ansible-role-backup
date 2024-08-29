@@ -64,7 +64,6 @@
     dest: "{{ backup_script_dir }}/{{ backup_setting_name }}"
     owner: "{{ backup_setting.user }}"
     mode: "0700"
-  no_log: true
 - name: Set backup cron jobs:{{ backup_setting_name }}
   ansible.builtin.cron:
     user: "{{ backup_setting.user }}"
