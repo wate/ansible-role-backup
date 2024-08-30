@@ -32,10 +32,6 @@ Role Variables
 
 バックアップの世代管理用ディレクトリ
 
-### `backup_settings`
-
-バックアップ設定
-
 ### `backup_restic_default_repo_type`
 
 リポジトリ種別の初期値  
@@ -52,6 +48,10 @@ Role Variables
 
 スナップショットのクリーンアップ方法の値の初期値  
 @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
+
+### `backup_settings`
+
+バックアップ設定
 
 ### `backup_restic_backup_common_options`
 
