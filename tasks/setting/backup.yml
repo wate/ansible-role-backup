@@ -39,8 +39,8 @@
         owner: "{{ backup_setting.user }}"
         mode: "0750"
       when:
-        - backup_setting.restic.target is undefined
         - restic_repo_type == 'local'
+        - backup_setting.restic.repo is undefined
 - name: Create/update rclone setting:{{ backup_setting_name }}
   when: backup_setting.rclone is defined
   become: true

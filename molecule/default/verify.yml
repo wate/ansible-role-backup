@@ -38,7 +38,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/test_command_undefined"
           register: backup_data_dir_result
-        - name: Assert backup dir:test_command_undefined
+        - name: Assert backup data directory:test_command_undefined
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
@@ -97,7 +97,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/test_command_only"
           register: backup_data_dir_result
-        - name: Assert backup dir:test_command_only
+        - name: Assert backup data directory:test_command_only
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
@@ -122,7 +122,7 @@
           block:
             - name: Check backup command section:test_command_only
               ansible.builtin.command:
-                cmd: grep "echo test_command_only >" "{{ backup_script_dir }}/test_command_only"
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_command_only"
               failed_when: backup_command_result.rc > 1
               changed_when: false
               register: backup_command_result
@@ -141,12 +141,165 @@
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_command_only/test.txt"
               register: backup_script_generated_file_result
-            - name: Assert backup dir:test_command_only
+            - name: Assert backup script generated file:test_command_only
               ansible.builtin.assert:
                 that:
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'command_only'
+    - name: Test restic only
+      become: true
+      become_user: restic_only
+      block:
+        - name: Check backup script:test_restic_only
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_restic_only"
+          register: backup_script_result
+        - name: Assert backup script:test_restic_only
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'restic_only'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory:test_restic_only
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_restic_only"
+          register: backup_data_dir_result
+        - name: Test cron setting
+          block:
+            - name: Check cron setting:test_restic_only
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "#Ansible: role:backup/setting:test_restic_only"
+                executable: /usr/bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_restic_only
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 0
+        - name: Test backup script detail
+          block:
+            - name: Check backup command section:test_restic_only
+              ansible.builtin.command:
+                cmd: grep "## バックアップ処理" "{{ backup_script_dir }}/test_restic_only"
+              failed_when: backup_command_result.rc > 1
+              changed_when: false
+              register: backup_command_result
+            - name: Assert backup command section:test_restic_only
+              ansible.builtin.assert:
+                that: backup_command_result.rc == 1
+            - name: Execute backup script:test_restic_only
+              ansible.builtin.command:
+                cmd: "{{ backup_script_dir }}/test_restic_only"
+              changed_when: false
+              register: exec_backup_script_result
+            - name: Assert execute backup script result:test_restic_only
+              ansible.builtin.assert:
+                that: exec_backup_script_result.rc == 0
+    - name: Test restic only with rclone
+      become: true
+      become_user: restic_only_with_rclone
+      block:
+        - name: Check backup script:test_restic_only_with_rclone
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_restic_only_with_rclone"
+          register: backup_script_result
+        - name: Assert backup script:test_restic_only_with_rclone
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'restic_only_with_rclone'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory:test_restic_only_with_rclone
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_restic_only_with_rclone"
+          register: backup_data_dir_result
+        - name: Test cron setting
+          block:
+            - name: Check cron setting:test_restic_only_with_rclone
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "#Ansible: role:backup/setting:test_restic_only_with_rclone"
+                executable: /usr/bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 0
+        - name: Test rclone config
+          block:
+            - name: Check ~/.config/rclone/rclone.conf:test_restic_only_with_rclone
+              ansible.builtin.stat:
+                path: ~/.config/rclone/rclone.conf
+              register: rclone_conf_result
+            - name: Assert ~/.config/rclone/rclone.conf:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that:
+                  - rclone_conf_result.stat.exists
+                  - rclone_conf_result.stat.isreg
+                  - rclone_conf_result.stat.mode == '0600'
+                  - rclone_conf_result.stat.pw_name == 'restic_only_with_rclone'
+            - name: Check rclone config section:test_restic_only_with_rclone
+              ansible.builtin.command:
+                cmd: grep "[cloudflare_r2]" ~/.config/rclone/rclone.conf
+              failed_when: rclone_config_section_result.rc > 1
+              changed_when: false
+              register: rclone_config_section_result
+            - name: Assert rclone config section:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: rclone_config_section_result.rc == 0
+            - name: Check rclone config access_key_id:test_restic_only_with_rclone
+              ansible.builtin.command:
+                cmd: grep "access_key_id = {{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}" ~/.config/rclone/rclone.conf
+              failed_when: rclone_config_access_key_id_result.rc > 1
+              changed_when: false
+              register: rclone_config_access_key_id_result
+            - name: Assert rclone config access_key_id:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: rclone_config_access_key_id_result.rc == 0
+            - name: Check rclone config secret_access_key:test_restic_only_with_rclone
+              ansible.builtin.command:
+                cmd: grep "secret_access_key = {{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}" ~/.config/rclone/rclone.conf
+              failed_when: rclone_config_secret_access_key_result.rc > 1
+              changed_when: false
+              register: rclone_config_secret_access_key_result
+            - name: Assert rclone config secret_access_key:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: rclone_config_secret_access_key_result.rc == 0
+            - name: Check rclone config endpoint:test_restic_only_with_rclone
+              ansible.builtin.command:
+                cmd: grep "endpoint = {{ lookup('env', 'rclone_config_endpoint') }}" ~/.config/rclone/rclone.conf
+              failed_when: rclone_config_endpoint.rc > 1
+              changed_when: false
+              register: rclone_config_endpoint
+            - name: Assert rclone config endpoint:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: rclone_config_endpoint.rc == 0
+        - name: Test backup script detail
+          block:
+            - name: Check backup command section:test_restic_only_with_rclone
+              ansible.builtin.command:
+                cmd: grep "## バックアップ処理" "{{ backup_script_dir }}/test_restic_only_with_rclone"
+              failed_when: backup_command_result.rc > 1
+              changed_when: false
+              register: backup_command_result
+            - name: Assert backup command section:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: backup_command_result.rc == 1
+            - name: Execute backup script:test_restic_only_with_rclone
+              ansible.builtin.command:
+                cmd: "{{ backup_script_dir }}/test_restic_only_with_rclone"
+              changed_when: false
+              register: exec_backup_script_result
+            - name: Assert execute backup script result:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that: exec_backup_script_result.rc == 0
     - name: Test restic default
       become: true
       become_user: restic_default
@@ -166,7 +319,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/test_restic_default"
           register: backup_data_dir_result
-        - name: Assert backup dir:test_restic_default
+        - name: Assert backup data directory:test_restic_default
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
@@ -191,7 +344,7 @@
           block:
             - name: Check backup command section:test_restic_default
               ansible.builtin.command:
-                cmd: grep "echo test_restic_default >" "{{ backup_script_dir }}/test_restic_default"
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_default"
               failed_when: backup_command_result.rc > 1
               changed_when: false
               register: backup_command_result
@@ -235,7 +388,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/test_restic_forget_keep_param"
           register: backup_data_dir_result
-        - name: Assert backup dir:test_restic_forget_keep_param
+        - name: Assert backup data directory:test_restic_forget_keep_param
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
@@ -260,7 +413,7 @@
           block:
             - name: Check backup command section:test_restic_forget_keep_param
               ansible.builtin.command:
-                cmd: grep "echo test_restic_forget_keep_param >" "{{ backup_script_dir }}/test_restic_forget_keep_param"
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_forget_keep_param"
               failed_when: backup_command_result.rc > 1
               changed_when: false
               register: backup_command_result
@@ -269,7 +422,7 @@
                 that: backup_command_result.rc == 0
             - name: Check restic forget command:test_restic_forget_keep_param
               ansible.builtin.command:
-                cmd: grep "restic forget --prune --keep-last 5" "{{ backup_script_dir }}/test_restic_forget_keep_param"
+                cmd: grep "restic forget --keep-within-daily 5d --prune" "{{ backup_script_dir }}/test_restic_forget_keep_param"
               failed_when: restic_forget_command_result.rc > 1
               changed_when: false
               register: restic_forget_command_result
@@ -313,7 +466,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/test_restic_and_rclone"
           register: backup_data_dir_result
-        - name: Assert backup dir:test_restic_and_rclone
+        - name: Assert backup data directory:test_restic_and_rclone
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
@@ -387,7 +540,7 @@
           block:
             - name: Check backup command section:test_restic_and_rclone
               ansible.builtin.command:
-                cmd: grep "echo test_restic_and_rclone >" "{{ backup_script_dir }}/test_restic_and_rclone"
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_and_rclone"
               failed_when: backup_command_result.rc > 1
               changed_when: false
               register: backup_command_result
@@ -412,7 +565,6 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_and_rclone'
-
     - name: Test wordpress
       become: true
       become_user: wordpress
@@ -432,7 +584,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/wordpress"
           register: backup_data_dir_result
-        - name: Assert backup dir:wordpress
+        - name: Assert backup data directory:wordpress
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
@@ -491,7 +643,7 @@
           ansible.builtin.stat:
             path: "{{ backup_data_dir }}/redmine"
           register: backup_data_dir_result
-        - name: Assert backup dir:redmine
+        - name: Assert backup data directory:redmine
           ansible.builtin.assert:
             that:
               - backup_data_dir_result.stat.exists
