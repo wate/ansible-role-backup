@@ -58,13 +58,12 @@ fi
 {% set restic_backup_options = restic_backup_options + restic_setting.backup_options -%}
 {% endif %}
 {% set restic_backup_target = backup_setting.target | default(backup_data_dir + '/' + backup_setting_name) -%}
-restic backup "{{ restic_backup_target }}" {{ restic_backup_options | join(' ') }}
+restic backup {{ restic_backup_options | join(' ') }} "{{ restic_backup_target }}"
 
 ### スナップショットのクリーンアップ
-{% set restic_forget_options = backup_restic_forget_common_options | default([]) %}
 {% set restic_keep_type = restic_setting.keep_type | default(backup_restic_default_keep_type) -%}
 {% set restic_keep_value = restic_setting.keep_value | default(backup_restic_default_keep_value) | string -%}
 {% set restic_keep_param = '--keep-' + restic_keep_type + ' ' + restic_keep_value -%}
-{% set restic_forget_options = restic_forget_options + [restic_keep_param] %}
+{% set restic_forget_options = [restic_keep_param] + (backup_restic_forget_common_options | default([])) %}
 restic forget {{ restic_forget_options | join(' ') }}
 {% endif %}

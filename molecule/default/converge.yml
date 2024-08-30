@@ -33,8 +33,13 @@
             state: directory
             mode: "0700"
         - name: generate dummy file
-          ansible.builtin.command:
-            cmd: rclone test makefiles /home/restic_only/dummy
+          ansible.builtin.shell:
+            cmd: |
+              set -o pipefail
+              NOW_DATETIME=$(date +"%Y%m%d_%H%M%S")
+              DUMMY_TEXT=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 32 | sort | uniq)
+              echo "${DUMMY_TEXT}" >/home/restic_only/dummy/dummy_${NOW_DATETIME}.txt
+            executable: /usr/bin/bash
     - name: Generate dummy data
       become: true
       become_user: restic_only_with_rclone
@@ -45,8 +50,13 @@
             state: directory
             mode: "0700"
         - name: generate dummy file
-          ansible.builtin.command:
-            cmd: rclone test makefiles /home/restic_only_with_rclone/dummy
+          ansible.builtin.shell:
+            cmd: |
+              set -o pipefail
+              NOW_DATETIME=$(date +"%Y%m%d_%H%M%S")
+              DUMMY_TEXT=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 32 | sort | uniq)
+              echo "${DUMMY_TEXT}" >/home/restic_only_with_rclone/dummy/dummy_${NOW_DATETIME}.txt
+            executable: /usr/bin/bash
     - name: Include role
       ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

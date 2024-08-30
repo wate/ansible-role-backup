@@ -12,7 +12,7 @@ backup_settings:
     cron:
       hour: 1
       minute: 23
-    command: rclone test makefile ${BACKUP_DATA_DIR}/test.txt
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
   ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
   test_restic_only:
     user: restic_only
@@ -48,7 +48,7 @@ backup_settings:
     cron:
       hour: 1
       minute: 23
-    command: rclone test makefile ${BACKUP_DATA_DIR}/test.txt
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_password: very_5tr0ng_p@55w0rd
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
@@ -58,11 +58,11 @@ backup_settings:
     cron:
       hour: 1
       minute: 23
-    command: rclone test makefile ${BACKUP_DATA_DIR}/test.txt
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_password: very_very_5tr0ng_p@55w0rd
-      keep_type: last
-      keep_value: 5
+      keep_type: within-daily
+      keep_value: 5d
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_and_rclone:
@@ -70,7 +70,7 @@ backup_settings:
     cron:
       hour: 1
       minute: 23
-    command: rclone test makefile ${BACKUP_DATA_DIR}/test.txt
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_type: rclone
       repo: cloudflare_r2:backup/test_restic_and_rclone

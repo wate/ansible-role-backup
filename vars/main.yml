@@ -22,3 +22,8 @@ restic_allow_forget_keep_types:
   - weekly
   - monthly
   - yearly
+  - within-hourly
+  - within-daily
+  - within-weekly
+  - within-monthly
+  - within-yearly
