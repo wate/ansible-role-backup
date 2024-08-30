@@ -52,7 +52,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_command_undefined"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -111,7 +111,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_command_only"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -173,7 +173,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_restic_only"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -225,7 +225,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_restic_only_with_rclone"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -333,7 +333,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_restic_default"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -402,7 +402,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_restic_forget_keep_param"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -422,7 +422,7 @@
                 that: backup_command_result.rc == 0
             - name: Check restic forget command:test_restic_forget_keep_param
               ansible.builtin.command:
-                cmd: grep "restic forget --keep-within-daily 5d --prune" "{{ backup_script_dir }}/test_restic_forget_keep_param"
+                cmd: grep "restic forget --keep-hourly 6 --prune" "{{ backup_script_dir }}/test_restic_forget_keep_param"
               failed_when: restic_forget_command_result.rc > 1
               changed_when: false
               register: restic_forget_command_result
@@ -480,7 +480,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:test_restic_and_rclone"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -598,7 +598,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:wordpress"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result
@@ -657,7 +657,7 @@
                 cmd: |
                   set -o pipefail
                   crontab -l | grep "#Ansible: role:backup/setting:redmine"
-                executable: /usr/bin/bash
+                executable: /bin/bash
               failed_when: cron_setting_result.rc > 1
               changed_when: false
               register: cron_setting_result

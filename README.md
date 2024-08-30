@@ -1,7 +1,7 @@
 backup
 =================
 
-Setup backup setting(alpha)
+Setup backup setting
 
 OS Platform
 -----------------
@@ -32,10 +32,6 @@ Role Variables
 
 バックアップの世代管理用ディレクトリ
 
-### `backup_settings`
-
-バックアップ設定
-
 ### `backup_restic_default_repo_type`
 
 リポジトリ種別の初期値  
@@ -44,17 +40,18 @@ Role Variables
 
 ### `backup_restic_default_keep_type`
 
-世代数の管理方法の初期値  
+スナップショットのクリーンアップ方法の初期値  
 ※設定値の値は「vars/main.yml」の「restic_allow_forget_keep_types」変数を参照  
 @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 
 ### `backup_restic_default_keep_value`
 
-世代数の初期値
+スナップショットのクリーンアップ方法の値の初期値  
+@see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 
-### `backup_restic_init_common_options`
+### `backup_settings`
 
-`restic init`実行時の共通オプション
+バックアップ設定
 
 ### `backup_restic_backup_common_options`
 
