@@ -66,7 +66,7 @@ backup_settings: {}
 #       ## `restic forget`実行時の--keep-*オプションの種別
 #       ## (省略時：{{ backup_restic_forget_default_keep_type }})
 #       # keep_type: daily
-#       ## `restic forget`実行時の--keep-*オプションの値
+#       ## `restic forget`実行時の--keep-*オプションに指定する値
 #       ## (省略時：{{ backup_restic_forget_default_keep_value }})
 #       # keep_value: 3
 #     ## rcloneの設定(任意)
@@ -88,14 +88,14 @@ backup_settings: {}
 backup_restic_default_repo_type: local
 
 ## -----------------
-## 世代数の管理方法の初期値
+## スナップショットのクリーンアップ方法の初期値
 ## ※設定値の値は「vars/main.yml」の「restic_allow_forget_keep_types」変数を参照
 ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 ## -----------------
 backup_restic_default_keep_type: last
 
 ## -----------------
-## 世代数/期間の初期値
+## スナップショットのクリーンアップ方法の値の初期値
 ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 ## -----------------
 backup_restic_default_keep_value: "3"
