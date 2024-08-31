@@ -99,7 +99,7 @@ backup_settings:
       rclone test makefiles ${BACKUP_DATA_DIR}
       # NOW_DATETIME=$(date +"%Y%m%d_%H%M%S")
       # wp db export ${BACKUP_DATA_DIR}/dump_${NOW_DATETIME}.sql --path /var/www/wordpress
-      # tar vcfz uploads_${NOW_DATETIME}.tar.gz /var/www/wordpress/wp-content/uploads/
+      # tar vcfz uploads_${NOW_DATETIME}.tar.gz /var/www/wordpress/wp-content/uploads/*
     restic:
       repo_password: very_very_very_very_5tr0ng_p@55w0rd
   redmine:
@@ -116,7 +116,7 @@ backup_settings:
       rclone test makefiles ${BACKUP_DATA_DIR}
       # NOW_DATETIME=$(date +"%Y%m%d_%H%M%S")
       # mysqldump -u ${DB_USER} -p${DB_PASSWORD} -h ${DB_HOST} --single-transaction ${DB_NAME} | gzip >dump_${NOW_DATETIME}.sql.gz
-      # tar vcfz files__${NOW_DATETIME}.tar.gz /path/to/redmine/files/
+      # tar vcfz files__${NOW_DATETIME}.tar.gz /path/to/redmine/files/*
     restic:
       repo_type: rclone
       repo: cloudflare_r2:backup/bookworm/redmine
