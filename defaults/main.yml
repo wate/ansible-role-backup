@@ -95,7 +95,7 @@ backup_settings: {}
 #       ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 #       # forget_keep_value: 3
 #       ## `restic forget`実行時のその他のオプション
-#       # forget_options: []
+#       # forget_other_options: []
 #     ## rcloneの設定(任意)
 #     # rclone:
 #     #   cloudflare_r2:
