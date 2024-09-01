@@ -65,7 +65,7 @@ restic backup {{ restic_backup_options | join(' ') }} "{{ restic_backup_target }
 {% set restic_forget_keep_type = restic_setting.forget_keep_type | default(backup_restic_default_forget_keep_type) -%}
 {% set restic_forget_keep_value = restic_setting.forget_keep_value | default(backup_restic_default_forget_keep_value) | string -%}
 {% set restic_forget_keep_param = '--keep-' + restic_forget_keep_type + ' ' + restic_forget_keep_value -%}
-{% set restic_forget_options = [restic_forget_keep_param] + (restic_setting.forget_options | default([])) + (backup_restic_forget_common_options | default([])) %}
+{% set restic_forget_options = [restic_forget_keep_param] + (restic_setting.forget_other_options | default([])) + (backup_restic_forget_common_options | default([])) %}
 restic forget {{ restic_forget_options | join(' ') }}
 {% endif %}
 {% endif %}

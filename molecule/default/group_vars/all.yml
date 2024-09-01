@@ -85,7 +85,7 @@ backup_settings:
       repo_password: very_5tr0ng_p@55w0rd
       forget_keep_type: hourly
       forget_keep_value: 24
-      forget_options:
+      forget_other_options:
         - --keep-daily 3
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
