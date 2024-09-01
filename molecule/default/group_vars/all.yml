@@ -61,8 +61,32 @@ backup_settings:
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_password: very_very_5tr0ng_p@55w0rd
-      keep_type: hourly
-      keep_value: 6
+      forget_keep_type: hourly
+      forget_keep_value: 6
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+  ## バックアップ終了後に`restic forget`を実行しない
+  test_restic_no_forget:
+    user: restic_no_forget
+    cron:
+      hour: 1
+      minute: 23
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
+    restic:
+      repo_password: very_5tr0ng_p@55w0rd
+      forget: false
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+  ## 過去3日以内の日次スナップショットと、直近24時間以内の時間毎スナップショットを残してスナップショットをクリーンアップする
+  test_restic_other_forget_option:
+    user: restic_other_forget_option
+    cron:
+      minute: 23
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
+    restic:
+      repo_password: very_5tr0ng_p@55w0rd
+      forget_keep_type: hourly
+      forget_keep_value: 24
+      forget_options:
+        - --keep-daily 3
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_and_rclone:
@@ -121,8 +145,8 @@ backup_settings:
       repo_type: rclone
       repo: cloudflare_r2:backup/redmine
       repo_password: very_very_very_very_very_5tr0ng_p@55w0rd
-      keep_type: weekly
-      keep_value: 2
+      forget_keep_type: weekly
+      forget_keep_value: 2
     rclone:
       cloudflare_r2:
         type: s3

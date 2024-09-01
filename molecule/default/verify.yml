@@ -447,6 +447,162 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_forget_keep_param'
+    - name: Test restic no forget
+      become: true
+      become_user: restic_no_forget
+      block:
+        - name: Check backup script:test_restic_no_forget
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_restic_no_forget"
+          register: backup_script_result
+        - name: Assert backup script:test_restic_no_forget
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'restic_no_forget'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory:test_restic_no_forget
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_restic_no_forget"
+          register: backup_data_dir_result
+        - name: Assert backup data directory:test_restic_no_forget
+          ansible.builtin.assert:
+            that:
+              - backup_data_dir_result.stat.exists
+              - backup_data_dir_result.stat.isdir
+              - backup_data_dir_result.stat.writeable
+              - backup_data_dir_result.stat.pw_name == 'restic_no_forget'
+        - name: Test cron setting
+          block:
+            - name: Check cron setting:test_restic_no_forget
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "#Ansible: role:backup/setting:test_restic_no_forget"
+                executable: /bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_restic_no_forget
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 0
+        - name: Test backup script detail
+          block:
+            - name: Check backup command section:test_restic_no_forget
+              ansible.builtin.command:
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_no_forget"
+              failed_when: backup_command_result.rc > 1
+              changed_when: false
+              register: backup_command_result
+            - name: Assert backup command:test_restic_no_forget
+              ansible.builtin.assert:
+                that: backup_command_result.rc == 0
+            - name: Check restic forget command:test_restic_no_forget
+              ansible.builtin.command:
+                cmd: grep "restic forget" "{{ backup_script_dir }}/test_restic_no_forget"
+              failed_when: restic_forget_command_result.rc > 1
+              changed_when: false
+              register: restic_forget_command_result
+            - name: Assert restic forget command:test_restic_no_forget
+              ansible.builtin.assert:
+                that: restic_forget_command_result.rc == 1
+            - name: Execute backup script:test_restic_no_forget
+              ansible.builtin.command:
+                cmd: "{{ backup_script_dir }}/test_restic_no_forget"
+              changed_when: false
+              register: exec_backup_script_result
+            - name: Assert execute backup script result:test_restic_no_forget
+              ansible.builtin.assert:
+                that: exec_backup_script_result.rc == 0
+            - name: Check backup script generated file:test_restic_no_forget
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_no_forget/test.txt"
+              register: backup_script_generated_file_result
+            - name: Assert backup script generated file:test_restic_no_forget
+              ansible.builtin.assert:
+                that:
+                  - backup_script_generated_file_result.stat.exists
+                  - backup_script_generated_file_result.stat.isreg
+                  - backup_script_generated_file_result.stat.pw_name == 'restic_no_forget'
+    - name: Test restic other forget option
+      become: true
+      become_user: restic_other_forget_option
+      block:
+        - name: Check backup script:test_restic_other_forget_option
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_restic_other_forget_option"
+          register: backup_script_result
+        - name: Assert backup script:test_restic_other_forget_option
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'restic_other_forget_option'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory:test_restic_other_forget_option
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_restic_other_forget_option"
+          register: backup_data_dir_result
+        - name: Assert backup data directory:test_restic_other_forget_option
+          ansible.builtin.assert:
+            that:
+              - backup_data_dir_result.stat.exists
+              - backup_data_dir_result.stat.isdir
+              - backup_data_dir_result.stat.writeable
+              - backup_data_dir_result.stat.pw_name == 'restic_other_forget_option'
+        - name: Test cron setting
+          block:
+            - name: Check cron setting:test_restic_other_forget_option
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "#Ansible: role:backup/setting:test_restic_other_forget_option"
+                executable: /bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 0
+        - name: Test backup script detail
+          block:
+            - name: Check backup command section:test_restic_other_forget_option
+              ansible.builtin.command:
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_other_forget_option"
+              failed_when: backup_command_result.rc > 1
+              changed_when: false
+              register: backup_command_result
+            - name: Assert backup command:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that: backup_command_result.rc == 0
+            - name: Check restic forget command:test_restic_other_forget_option
+              ansible.builtin.command:
+                cmd: grep "restic forget --keep-hourly 24 --keep-daily 3 --prune" "{{ backup_script_dir }}/test_restic_other_forget_option"
+              failed_when: restic_forget_command_result.rc > 1
+              changed_when: false
+              register: restic_forget_command_result
+            - name: Assert restic forget command:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that: restic_forget_command_result.rc == 0
+            - name: Execute backup script:test_restic_other_forget_option
+              ansible.builtin.command:
+                cmd: "{{ backup_script_dir }}/test_restic_other_forget_option"
+              changed_when: false
+              register: exec_backup_script_result
+            - name: Assert execute backup script result:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that: exec_backup_script_result.rc == 0
+            - name: Check backup script generated file:test_restic_other_forget_option
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_other_forget_option/test.txt"
+              register: backup_script_generated_file_result
+            - name: Assert backup script generated file:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that:
+                  - backup_script_generated_file_result.stat.exists
+                  - backup_script_generated_file_result.stat.isreg
+                  - backup_script_generated_file_result.stat.pw_name == 'restic_other_forget_option'
     - name: Test restic and rclone
       become: true
       become_user: restic_and_rclone

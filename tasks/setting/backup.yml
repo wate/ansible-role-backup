@@ -19,7 +19,7 @@
     - name: Set setting variables
       ansible.builtin.set_fact:
         restic_repo_type: "{{ backup_setting.restic.repo_type | default(backup_restic_default_repo_type) }}"
-        restic_forget_keep_type: "{{ backup_setting.restic.forget_keep_type | default(backup_restic_default_keep_type) }}"
+        restic_forget_keep_type: "{{ backup_setting.restic.forget_keep_type | default(backup_restic_default_forget_keep_type) }}"
     - name: Assert restic setting:{{ backup_setting_name }}
       ansible.builtin.assert:
         that:

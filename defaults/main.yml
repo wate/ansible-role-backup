@@ -31,13 +31,13 @@ backup_restic_default_repo_type: local
 ## ※設定値の値は「vars/main.yml」の「restic_allow_forget_keep_types」変数を参照
 ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 ## -----------------
-backup_restic_default_keep_type: last
+backup_restic_default_forget_keep_type: last
 
 ## -----------------
 ## スナップショットのクリーンアップ方法の値の初期値
 ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
 ## -----------------
-backup_restic_default_keep_value: "3"
+backup_restic_default_forget_keep_value: "3"
 
 ## -----------------
 ## バックアップ設定
@@ -83,14 +83,19 @@ backup_settings: {}
 #       # init_options: []
 #       ## `restic backup`実行時のオプション
 #       # backup_options: []
+#       ## スナップショット作成後に`restic forget`を実行するか否か
+#       ## (省略時：true)
+#       # forget: true
 #       ## `restic forget`実行時の--keep-*オプションの種別
-#       ## (省略時：{{ backup_restic_default_repo_type }})
+#       ## (省略時：{{ backup_restic_default_forget_keep_type }})
 #       ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
-#       # keep_type: last
+#       # forget_keep_type: last
 #       ## `restic forget`実行時の--keep-*オプションに指定する値
-#       ## (省略時：{{ backup_restic_default_keep_value }})
+#       ## (省略時：{{ backup_restic_default_forget_keep_value }})
 #       ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
-#       # keep_value: 3
+#       # forget_keep_value: 3
+#       ## `restic forget`実行時のその他のオプション
+#       # forget_options: []
 #     ## rcloneの設定(任意)
 #     # rclone:
 #     #   cloudflare_r2:
