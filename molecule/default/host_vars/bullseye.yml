@@ -1,27 +1,8 @@
 ---
+## --------
+## rcloneを利用するテストのみ設定を上書き
+## --------
 backup_settings:
-  ## バックアップ処理の指定：無し、バックアップデータの世代管理：無し
-  test_command_undefined:
-    user: command_undefined
-    cron:
-      hour: 1
-      minute: 23
-  ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
-  test_command_only:
-    user: command_only
-    cron:
-      hour: 1
-      minute: 23
-    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
-  ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
-  test_restic_only:
-    user: restic_only
-    cron:
-      hour: 1
-      minute: 23
-    restic:
-      target: /home/restic_only/dummy
-      repo_password: n0m@l_p@55w0rd
   ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_only_with_rclone:
@@ -31,7 +12,7 @@ backup_settings:
       minute: 23
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:backup/bullseye/restic_only_with_rclone
+      repo: cloudflare_r2:test/bullseye/restic_only_with_rclone
       repo_password: 5tr0ng_p@55w0rd
     rclone:
       cloudflare_r2:
@@ -43,27 +24,6 @@ backup_settings:
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
-  test_restic_default:
-    user: restic_default
-    cron:
-      hour: 1
-      minute: 23
-    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
-    restic:
-      repo_password: very_5tr0ng_p@55w0rd
-  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
-  ## keepパラメーターの指定による世代数の指定有り
-  test_restic_forget_keep_param:
-    user: restic_forget_keep_param
-    cron:
-      hour: 1
-      minute: 23
-    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
-    restic:
-      repo_password: very_very_5tr0ng_p@55w0rd
-      keep_type: hourly
-      keep_value: 6
-  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_and_rclone:
     user: restic_and_rclone
@@ -73,7 +33,7 @@ backup_settings:
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:backup/bullseye/test_restic_and_rclone
+      repo: cloudflare_r2:test/bullseye/test_restic_and_rclone
       repo_password: very_very_very_5tr0ng_p@55w0rd
     rclone:
       cloudflare_r2:
@@ -85,23 +45,6 @@ backup_settings:
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
   ## 実例のサンプル
-  wordpress:
-    user: wordpress
-    cron:
-      hour: 2
-      minute: 22
-    environment:
-      DB_HOST: localhost
-      DB_NAME: wordpress
-      DB_USER: wordpress_db_user
-      DB_PASSWORD: wordpress_db_password
-    command: |
-      rclone test makefiles ${BACKUP_DATA_DIR}
-      # NOW_DATETIME=$(date +"%Y%m%d_%H%M%S")
-      # wp db export ${BACKUP_DATA_DIR}/dump.sql --path /var/www/wordpress
-      # tar vcfz ${BACKUP_DATA_DIR}/uploads.tar.gz /var/www/wordpress/wp-content/uploads/*
-    restic:
-      repo_password: very_very_very_very_5tr0ng_p@55w0rd
   redmine:
     user: redmine
     cron:
@@ -119,7 +62,7 @@ backup_settings:
       # tar vcfz ${BACKUP_DATA_DIR}/files.tar.gz /path/to/redmine/files/*
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:backup/bullseye/redmine
+      repo: cloudflare_r2:test/bullseye/redmine
       repo_password: very_very_very_very_very_5tr0ng_p@55w0rd
       keep_type: weekly
       keep_value: 2
