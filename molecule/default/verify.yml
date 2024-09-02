@@ -721,6 +721,89 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_and_rclone'
+    - name: Test no schdule
+      become: true
+      become_user: no_schdule
+      block:
+        - name: Check backup script:test_no_schdule
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_no_schdule"
+          register: backup_script_result
+        - name: Assert backup script:test_no_schdule
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'no_schdule'
+              - backup_script_result.stat.executable
+        - name: Check backup data directory:test_no_schdule
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_no_schdule"
+          register: backup_data_dir_result
+        - name: Assert backup data directory:test_no_schdule
+          ansible.builtin.assert:
+            that:
+              - backup_data_dir_result.stat.exists
+              - backup_data_dir_result.stat.isdir
+              - backup_data_dir_result.stat.writeable
+              - backup_data_dir_result.stat.pw_name == 'no_schdule'
+        - name: Test cron setting
+          block:
+            - name: Check cron setting:test_no_schdule
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "#Ansible: role:backup/setting:test_no_schdule"
+                executable: /bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_no_schdule
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 1
+    - name: Test shared data and repo
+      become: true
+      become_user: shared_data_and_repo_main
+      block:
+        - name: Check backup script:test_shared_data_and_repo
+          ansible.builtin.stat:
+            path: "{{ backup_script_dir }}/test_shared_data_and_repo"
+          register: backup_script_result
+        - name: Assert backup script:test_shared_data_and_repo
+          ansible.builtin.assert:
+            that:
+              - backup_script_result.stat.exists
+              - backup_script_result.stat.isreg
+              - backup_script_result.stat.pw_name == 'shared_data_and_repo_main'
+              - backup_script_result.stat.gr_name == 'shared_data_and_repo'
+              - backup_script_result.stat.executable
+              - backup_script_result.stat.mode == '0700'
+        - name: Check backup data directory:test_shared_data_and_repo
+          ansible.builtin.stat:
+            path: "{{ backup_data_dir }}/test_shared_data_and_repo"
+          register: backup_data_dir_result
+        - name: Assert backup data directory:test_shared_data_and_repo
+          ansible.builtin.assert:
+            that:
+              - backup_data_dir_result.stat.exists
+              - backup_data_dir_result.stat.isdir
+              - backup_data_dir_result.stat.writeable
+              - backup_data_dir_result.stat.gr_name == 'shared_data_and_repo'
+              - backup_data_dir_result.stat.pw_name == 'shared_data_and_repo_main'
+              - backup_data_dir_result.stat.mode == '0750'
+        - name: Check backup repository directory:test_shared_data_and_repo
+          ansible.builtin.stat:
+            path: "{{ backup_repo_dir }}/test_shared_data_and_repo"
+          register: backup_repo_dir_result
+        - name: Assert backup data directory:test_shared_data_and_repo
+          ansible.builtin.assert:
+            that:
+              - backup_repo_dir_result.stat.exists
+              - backup_repo_dir_result.stat.isdir
+              - backup_repo_dir_result.stat.writeable
+              - backup_repo_dir_result.stat.gr_name == 'shared_data_and_repo'
+              - backup_repo_dir_result.stat.pw_name == 'shared_data_and_repo_main'
+              - backup_repo_dir_result.stat.mode == '0750'
     - name: Test wordpress
       become: true
       become_user: wordpress

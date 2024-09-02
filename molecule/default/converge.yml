@@ -16,6 +16,13 @@
       when: ansible_facts.pkg_mgr == 'dnf'
       changed_when: false
   tasks:
+    - name: Create group
+      ansible.builtin.group:
+        name: "{{ backup_group }}"
+      loop: "{{ backup_settings | dict2items | selectattr('value.group', 'defined') | map(attribute='value.group') | unique }}"
+      loop_control:
+        loop_var: backup_group
+        label: "{{ backup_group }}"
     - name: Create user
       ansible.builtin.user:
         name: "{{ backup.value.user }}"
