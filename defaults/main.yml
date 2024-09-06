@@ -43,80 +43,80 @@ backup_restic_default_forget_keep_value: "3"
 ## バックアップ設定
 ## -----------------
 backup_settings: {}
-#   ## 各設定ごとにデータ格納用ディレクトリが自動で作成される
-#   ## ---
-#   ## 各設定ごとに作成されるデータ格納用ディレクトリ：{{ backup_data_dir }}/{{ backup_setting.key }}
-#   ## ※作成されたデータ格納ディレクトリは「BACKUP_DATA_DIR」変数で参照可能
-#   ## ---
-#   wordpress:
-#     ## バックアップ処理を実行するユーザー(必須)
-#     user: wp_prod
-#     ## バックアップのデータ用ディレクトリ及びリポジトリのグループ(任意)
-#     ## ※グループに所属するアカウントにはバックアップデータ用ディレクトリおよびリポジトリ用ディレクトリに対する読み取り権限が付与されます
-#     ##   (ただし、ロールにより自動で作成されたデータ用ディレクトリ及びリポジトリの場合のみ)
-#     ## ※同一サーバー内の異なるアカウント間でバックアップデータを共有する場合などに利用します
-#     ##   (例：本番環境のバックアップデータをステージング環境に取り込む等)
-#     group: wordpress
-#     ## バックアップ処理を実行する時間(任意)
-#     cron:
-#       hour: 1
-#       minute: 23
-#     ## バックアップ処理を実行時のディレクトリ(任意)
-#     ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }})
-#     # chdir: "{{ backup_data_dir }}/{{ backup_setting.key }}"
-#     ## バックアップ処理のコマンド(任意)
-#     command: |
-#       wp db export dump.sql --path /var/www/html
-#       tar vcfz uploads.tar.gz /var/www/html/wp-content/uploads
-#     ## resticを利用したバックアップデータの世代管理設定(任意)
-#     restic:
-#       ## バックアップ対象のディレクトリ
-#       ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }})
-#       ## ※`target`の指定が省略された場合は対象ディレクトリが自動で作成されます
-#       # target: "{{ backup_data_dir }}/wordpress"
-#       ## リポジトリの種類(省略時:local)
-#       ## ※`local`または`rclone`以外の値が指定されている場合、リポジトリの初期化を手動で行う必要があります
-#       # repo_type: local
-#       ## リポジトリ
-#       ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }}))
-#       ## ※`repo`の指定が省略され、かつ、`repo_type`が`local`とみなされた場合は対象ディレクトリが自動で作成されます
-#       # repo: "{{ backup_repo_dir }}/wordpress"
-#       ## リポジトリのパスワード(resticを利用する場合は8文字以上のパスワードが必須)
-#       repo_password: very_5tr0ng_p@55w0rd
-#       ## その他、環境変数
-#       # environment: {}
-#       ## `restic init`実行時のオプション
-#       # init_options: []
-#       ## `restic backup`実行時のオプション
-#       # backup_options: []
-#       ## スナップショット作成後に`restic forget`を実行するか否か
-#       ## (省略時：true)
-#       # forget: true
-#       ## `restic forget`実行時の--keep-*オプションの種別
-#       ## (省略時：{{ backup_restic_default_forget_keep_type }})
-#       ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
-#       # forget_keep_type: last
-#       ## `restic forget`実行時の--keep-*オプションに指定する値
-#       ## (省略時：{{ backup_restic_default_forget_keep_value }})
-#       ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
-#       # forget_keep_value: 3
-#       ## `restic forget`実行時のその他のオプション
-#       # forget_other_options: []
-#     ## rcloneの設定(任意)
-#     # rclone:
-#     #   cloudflare_r2:
-#     #     type: s3
-#     #     provider: Cloudflare
-#     #     access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
-#     #     secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
-#     #     region: auto
-#     #     bucket_acl: private
-#     #     endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
+  ## 各設定ごとにデータ格納用ディレクトリが自動で作成される
+  ## ---
+  ## 各設定ごとに作成されるデータ格納用ディレクトリ：{{ backup_data_dir }}/{{ backup_setting.key }}
+  ## ※作成されたデータ格納ディレクトリは「BACKUP_DATA_DIR」変数で参照可能
+  ## ---
+  # wordpress:
+  #   ## バックアップ処理を実行するユーザー(必須)
+  #   user: wp_prod
+  #   ## バックアップのデータ用ディレクトリ及びリポジトリのグループ(任意)
+  #   ## ※グループに所属するアカウントにはバックアップデータ用ディレクトリおよびリポジトリ用ディレクトリに対する読み取り権限が付与されます
+  #   ##   (ただし、ロールにより自動で作成されたデータ用ディレクトリ及びリポジトリの場合のみ)
+  #   ## ※同一サーバー内の異なるアカウント間でバックアップデータを共有する場合などに利用します
+  #   ##   (例：本番環境のバックアップデータをステージング環境に取り込む等)
+  #   group: wordpress
+  #   ## バックアップ処理を実行する時間(任意)
+  #   cron:
+  #     hour: 1
+  #     minute: 23
+  #   ## バックアップ処理を実行時のディレクトリ(任意)
+  #   ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }})
+  #   # chdir: "{{ backup_data_dir }}/{{ backup_setting.key }}"
+  #   ## バックアップ処理のコマンド(任意)
+  #   command: |
+  #     wp db export dump.sql --path /var/www/html
+  #     tar vcfz uploads.tar.gz /var/www/html/wp-content/uploads
+  #   ## resticを利用したバックアップデータの世代管理設定(任意)
+  #   restic:
+  #     ## バックアップ対象のディレクトリ
+  #     ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }})
+  #     ## ※`target`の指定が省略された場合は対象ディレクトリが自動で作成されます
+  #     # target: "{{ backup_data_dir }}/wordpress"
+  #     ## リポジトリの種類(省略時:local)
+  #     ## ※`local`または`rclone`以外の値が指定されている場合、リポジトリの初期化を手動で行う必要があります
+  #     # repo_type: local
+  #     ## リポジトリ
+  #     ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }}))
+  #     ## ※`repo`の指定が省略され、かつ、`repo_type`が`local`とみなされた場合は対象ディレクトリが自動で作成されます
+  #     # repo: "{{ backup_repo_dir }}/wordpress"
+  #     ## リポジトリのパスワード(resticを利用する場合は8文字以上のパスワードが必須)
+  #     repo_password: very_5tr0ng_p@55w0rd
+  #     ## その他、環境変数
+  #     # environment: {}
+  #     ## `restic init`実行時のオプション
+  #     # init_options: []
+  #     ## `restic backup`実行時のオプション
+  #     # backup_options: []
+  #     ## スナップショット作成後に`restic forget`を実行するか否か
+  #     ## (省略時：true)
+  #     # forget: true
+  #     ## `restic forget`実行時の--keep-*オプションの種別
+  #     ## (省略時：{{ backup_restic_default_forget_keep_type }})
+  #     ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
+  #     # forget_keep_type: last
+  #     ## `restic forget`実行時の--keep-*オプションに指定する値
+  #     ## (省略時：{{ backup_restic_default_forget_keep_value }})
+  #     ## @see https://restic.readthedocs.io/en/stable/060_forget.html#removing-snapshots-according-to-a-policy
+  #     # forget_keep_value: 3
+  #     ## `restic forget`実行時のその他のオプション
+  #     # forget_other_options: []
+  #   ## rcloneの設定(任意)
+  #   # rclone:
+  #   #   cloudflare_r2:
+  #   #     type: s3
+  #   #     provider: Cloudflare
+  #   #     access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
+  #   #     secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
+  #   #     region: auto
+  #   #     bucket_acl: private
+  #   #     endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
 
 ## ----------------
 ## `restic init`実行時の共通オプション
 ## ----------------
-# backup_restic_init_common_options: []
+backup_restic_init_common_options: []
 
 ## ----------------
 ## `restic backup`実行時の共通オプション
