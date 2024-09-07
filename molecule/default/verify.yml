@@ -256,6 +256,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_only'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_only
           block:
             - name: Check cron setting:test_restic_only
@@ -347,6 +348,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_default'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_default
           block:
             - name: Check cron setting:test_restic_default
@@ -587,6 +589,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_forget_keep_param'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_forget_keep_param
           block:
             - name: Check cron setting:test_restic_forget_keep_param
@@ -698,6 +701,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_no_forget'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_no_forget
           block:
             - name: Check cron setting:test_restic_no_forget
@@ -809,6 +813,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_other_forget_option'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_other_forget_option
           block:
             - name: Check cron setting:test_restic_other_forget_option
@@ -1205,6 +1210,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'wordpress'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:wordpress
           block:
             - name: Check cron setting:wordpress
@@ -1292,10 +1298,7 @@
             - name: Assert repository directory:redmine
               ansible.builtin.assert:
                 that:
-                  - backup_repo_dir_result.stat.exists
-                  - backup_repo_dir_result.stat.isdir
-                  - backup_repo_dir_result.stat.writeable
-                  - backup_repo_dir_result.stat.pw_name == 'redmine'
+                  - not backup_repo_dir_result.stat.exists
         - name: Test cron setting:redmine
           block:
             - name: Check cron setting:redmine
