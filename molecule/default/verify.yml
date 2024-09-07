@@ -37,6 +37,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'command_undefined'
+                  - backup_script_result.stat.gr_name == 'command_undefined'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_command_undefined
           block:
@@ -51,6 +52,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'command_undefined'
+                  - backup_data_dir_result.stat.gr_name == 'command_undefined'
         - name: Test repository password file:test_command_undefined
           block:
             - name: Check repository password file:test_command_undefined
@@ -104,7 +106,7 @@
             - name: Assert execute backup script result:test_command_undefined
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
-  ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
+    ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
     - name: Test command only
       become: true
       become_user: command_only
@@ -121,6 +123,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'command_only'
+                  - backup_script_result.stat.gr_name == 'command_only'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_command_only
           block:
@@ -135,6 +138,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'command_only'
+                  - backup_data_dir_result.stat.gr_name == 'command_only'
         - name: Test repository password file:test_command_only
           block:
             - name: Check repository password file:test_command_only
@@ -215,6 +219,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_only'
+                  - backup_script_result.stat.gr_name == 'restic_only'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_only
           block:
@@ -229,6 +234,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_only'
+                  - backup_data_dir_result.stat.gr_name == 'restic_only'
         - name: Test repository password file:test_restic_only
           block:
             - name: Check repository password file:test_restic_only
@@ -242,6 +248,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_only'
+                  - repo_password_file_result.stat.gr_name == 'restic_only'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_only
           block:
@@ -256,6 +263,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_only'
+                  - backup_repo_dir_result.stat.gr_name == 'restic_only'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_only
           block:
@@ -307,6 +315,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_default'
+                  - backup_script_result.stat.gr_name == 'restic_default'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_default
           block:
@@ -321,6 +330,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_default'
+                  - backup_data_dir_result.stat.gr_name == 'restic_default'
         - name: Test repository password file:test_restic_default
           block:
             - name: Check repository password file:test_restic_default
@@ -334,6 +344,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_default'
+                  - repo_password_file_result.stat.gr_name == 'restic_default'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_default
           block:
@@ -348,6 +359,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_default'
+                  - backup_repo_dir_result.stat.gr_name == 'restic_default'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_default
           block:
@@ -410,6 +422,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_only_with_rclone'
+                  - backup_script_result.stat.gr_name == 'restic_only_with_rclone'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_only_with_rclone
           block:
@@ -424,6 +437,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_only_with_rclone'
+                  - backup_data_dir_result.stat.gr_name == 'restic_only_with_rclone'
         - name: Test repository password file:test_restic_only_with_rclone
           block:
             - name: Check repository password file:test_restic_only_with_rclone
@@ -437,6 +451,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_only_with_rclone'
+                  - repo_password_file_result.stat.gr_name == 'restic_only_with_rclone'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_only_with_rclone
           block:
@@ -548,6 +563,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_forget_keep_param'
+                  - backup_script_result.stat.gr_name == 'restic_forget_keep_param'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_forget_keep_param
           block:
@@ -562,6 +578,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_forget_keep_param'
+                  - backup_data_dir_result.stat.gr_name == 'restic_forget_keep_param'
         - name: Test repository password file:test_restic_forget_keep_param
           block:
             - name: Check repository password file:test_restic_forget_keep_param
@@ -575,6 +592,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_forget_keep_param'
+                  - repo_password_file_result.stat.gr_name == 'restic_forget_keep_param'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_forget_keep_param
           block:
@@ -589,6 +607,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_forget_keep_param'
+                  - backup_repo_dir_result.stat.gr_name == 'restic_forget_keep_param'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_forget_keep_param
           block:
@@ -660,6 +679,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_no_forget'
+                  - backup_script_result.stat.gr_name == 'restic_no_forget'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_no_forget
           block:
@@ -674,6 +694,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_no_forget'
+                  - backup_data_dir_result.stat.gr_name == 'restic_no_forget'
         - name: Test repository password file:test_restic_no_forget
           block:
             - name: Check repository password file:test_restic_no_forget
@@ -687,6 +708,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_no_forget'
+                  - repo_password_file_result.stat.gr_name == 'restic_no_forget'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_no_forget
           block:
@@ -701,6 +723,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_no_forget'
+                  - backup_repo_dir_result.stat.gr_name == 'restic_no_forget'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_no_forget
           block:
@@ -772,6 +795,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_other_forget_option'
+                  - backup_script_result.stat.gr_name == 'restic_other_forget_option'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_other_forget_option
           block:
@@ -786,6 +810,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_other_forget_option'
+                  - backup_data_dir_result.stat.gr_name == 'restic_other_forget_option'
         - name: Test repository password file:test_restic_other_forget_option
           block:
             - name: Check repository password file:test_restic_other_forget_option
@@ -799,6 +824,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_other_forget_option'
+                  - repo_password_file_result.stat.gr_name == 'restic_other_forget_option'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_other_forget_option
           block:
@@ -813,6 +839,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'restic_other_forget_option'
+                  - backup_repo_dir_result.stat.gr_name == 'restic_other_forget_option'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_restic_other_forget_option
           block:
@@ -884,6 +911,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'restic_and_rclone'
+                  - backup_script_result.stat.gr_name == 'restic_and_rclone'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_restic_and_rclone
           block:
@@ -898,6 +926,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_and_rclone'
+                  - backup_data_dir_result.stat.gr_name == 'restic_and_rclone'
         - name: Test repository password file:test_restic_and_rclone
           block:
             - name: Check repository password file:test_restic_and_rclone
@@ -911,6 +940,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_and_rclone'
+                  - repo_password_file_result.stat.gr_name == 'restic_and_rclone'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_and_rclone
           block:
@@ -1031,6 +1061,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'no_schdule'
+                  - backup_script_result.stat.gr_name == 'no_schdule'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:test_no_schdule
           block:
@@ -1045,6 +1076,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'no_schdule'
+                  - backup_data_dir_result.stat.gr_name == 'no_schdule'
         - name: Test repository password file:test_no_schdule
           block:
             - name: Check repository password file:test_no_schdule
@@ -1058,6 +1090,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'no_schdule'
+                  - repo_password_file_result.stat.gr_name == 'no_schdule'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_no_schdule
           block:
@@ -1072,6 +1105,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'no_schdule'
+                  - backup_repo_dir_result.stat.gr_name == 'no_schdule'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_no_schdule
           block:
@@ -1118,8 +1152,8 @@
                   - backup_data_dir_result.stat.exists
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
-                  - backup_data_dir_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_data_dir_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - backup_data_dir_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_data_dir_result.stat.mode == '0750'
 
         - name: Test repository password file:test_shared_data_and_repo
@@ -1134,8 +1168,8 @@
                   - repo_password_file_result.stat.exists
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
-                  - repo_password_file_result.stat.gr_name == 'shared_data_and_repo'
                   - repo_password_file_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - repo_password_file_result.stat.gr_name == 'shared_data_and_repo'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_shared_data_and_repo
           block:
@@ -1149,8 +1183,8 @@
                   - backup_repo_dir_result.stat.exists
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
-                  - backup_repo_dir_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_repo_dir_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - backup_repo_dir_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_repo_dir_result.stat.mode == '0750'
     ## 設定例：WordPress
     - name: Test wordpress
@@ -1169,6 +1203,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'wordpress'
+                  - backup_script_result.stat.gr_name == 'wordpress'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:wordpress
           block:
@@ -1183,6 +1218,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'wordpress'
+                  - backup_data_dir_result.stat.gr_name == 'wordpress'
         - name: Test repository password file:wordpress
           block:
             - name: Check repository password file:wordpress
@@ -1196,6 +1232,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'wordpress'
+                  - repo_password_file_result.stat.gr_name == 'wordpress'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:wordpress
           block:
@@ -1210,6 +1247,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'wordpress'
+                  - backup_repo_dir_result.stat.gr_name == 'wordpress'
                   - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:wordpress
           block:
@@ -1261,6 +1299,7 @@
                   - backup_script_result.stat.exists
                   - backup_script_result.stat.isreg
                   - backup_script_result.stat.pw_name == 'redmine'
+                  - backup_script_result.stat.gr_name == 'redmine'
                   - backup_script_result.stat.executable
         - name: Test backup data directory:redmine
           block:
@@ -1275,6 +1314,7 @@
                   - backup_data_dir_result.stat.isdir
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'redmine'
+                  - backup_data_dir_result.stat.gr_name == 'redmine'
         - name: Test repository password file:redmine
           block:
             - name: Check repository password file:redmine
@@ -1288,6 +1328,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'redmine'
+                  - repo_password_file_result.stat.gr_name == 'redmine'
                   - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:redmine
           block:
