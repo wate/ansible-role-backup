@@ -6,72 +6,14 @@ backup_settings:
   ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_only_with_rclone:
-    user: restic_only_with_rclone
-    cron:
-      hour: 1
-      minute: 23
     restic:
-      repo_type: rclone
       repo: cloudflare_r2:test/bullseye/restic_only_with_rclone
-      repo_password: 5tr0ng_p@55w0rd
-    rclone:
-      cloudflare_r2:
-        type: s3
-        provider: Cloudflare
-        access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
-        secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
-        region: auto
-        bucket_acl: private
-        endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_and_rclone:
-    user: restic_and_rclone
-    cron:
-      hour: 1
-      minute: 23
-    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
-      repo_type: rclone
       repo: cloudflare_r2:test/bullseye/test_restic_and_rclone
-      repo_password: very_very_very_5tr0ng_p@55w0rd
-    rclone:
-      cloudflare_r2:
-        type: s3
-        provider: Cloudflare
-        access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
-        secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
-        region: auto
-        bucket_acl: private
-        endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
   ## 実例のサンプル
   redmine:
-    user: redmine
-    cron:
-      hour: 3
-      minute: 33
-    environment:
-      DB_HOST: localhost
-      DB_NAME: redmine
-      DB_USER: redmine_db_user
-      DB_PASSWORD: redmine_db_password
-    command: |
-      rclone test makefiles ${BACKUP_DATA_DIR}
-      # NOW_DATETIME=$(date +"%Y%m%d_%H%M%S")
-      # mysqldump -u ${DB_USER} -p${DB_PASSWORD} -h ${DB_HOST} --single-transaction ${DB_NAME} >${BACKUP_DATA_DIR}/dump.sql.gz
-      # tar vcfz ${BACKUP_DATA_DIR}/files.tar.gz /path/to/redmine/files/*
     restic:
-      repo_type: rclone
       repo: cloudflare_r2:test/bullseye/redmine
-      repo_password: very_very_very_very_very_5tr0ng_p@55w0rd
-      keep_type: weekly
-      keep_value: 2
-    rclone:
-      cloudflare_r2:
-        type: s3
-        provider: Cloudflare
-        access_key_id: "{{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}"
-        secret_access_key: "{{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}"
-        region: auto
-        bucket_acl: private
-        endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
