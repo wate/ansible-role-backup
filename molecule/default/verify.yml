@@ -242,6 +242,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_only'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_only
           block:
             - name: Check repository directory:test_restic_only
@@ -332,6 +333,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_default'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_default
           block:
             - name: Check repository directory:test_restic_default
@@ -433,6 +435,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_only_with_rclone'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_only_with_rclone
           block:
             - name: Check repository directory:test_restic_only_with_rclone
@@ -570,6 +573,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_forget_keep_param'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_forget_keep_param
           block:
             - name: Check repository directory:test_restic_forget_keep_param
@@ -680,6 +684,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_no_forget'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_no_forget
           block:
             - name: Check repository directory:test_restic_no_forget
@@ -790,6 +795,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_other_forget_option'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_other_forget_option
           block:
             - name: Check repository directory:test_restic_other_forget_option
@@ -900,6 +906,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'restic_and_rclone'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_restic_and_rclone
           block:
             - name: Check repository directory:test_restic_and_rclone
@@ -1046,6 +1053,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'no_schdule'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:test_no_schdule
           block:
             - name: Check repository directory:test_no_schdule
@@ -1059,6 +1067,7 @@
                   - backup_repo_dir_result.stat.isdir
                   - backup_repo_dir_result.stat.writeable
                   - backup_repo_dir_result.stat.pw_name == 'no_schdule'
+                  - backup_repo_dir_result.stat.mode == '0750'
         - name: Test cron setting:test_no_schdule
           block:
             - name: Check cron setting:test_no_schdule
@@ -1182,6 +1191,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'wordpress'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:wordpress
           block:
             - name: Check repository directory:wordpress
@@ -1272,6 +1282,7 @@
                   - repo_password_file_result.stat.isreg
                   - repo_password_file_result.stat.writeable
                   - repo_password_file_result.stat.pw_name == 'redmine'
+                  - repo_password_file_result.stat.mode == '0640'
         - name: Test repository directory:redmine
           block:
             - name: Check repository directory:redmine
