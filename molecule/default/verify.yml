@@ -11,101 +11,16 @@
     backup_repo_dir: "{{ backup_base_dir }}/repo"
     backup_repo_password_dir: "{{ backup_base_dir }}/password"
   tasks:
-    ## テストの前処理
+    ## パッケージのテスト
     - name: Gather package facts
       ansible.builtin.package_facts:
         manager: auto
     - name: Assert packages
       ansible.builtin.assert:
         that:
+          - ansible_facts.packages['cron'] is defined
           - ansible_facts.packages['rclone'] is defined
           - ansible_facts.packages['restic'] is defined
-    ## バックアップ処理の指定：無し、バックアップデータの世代管理：無し
-    - name: Test command undefined
-      become: true
-      become_user: command_undefined
-      block:
-        - name: Test backup script:test_command_undefined
-          block:
-            - name: Check backup script:test_command_undefined
-              ansible.builtin.stat:
-                path: "{{ backup_script_dir }}/test_command_undefined"
-              register: backup_script_result
-            - name: Assert backup script:test_command_undefined
-              ansible.builtin.assert:
-                that:
-                  - backup_script_result.stat.exists
-                  - backup_script_result.stat.isreg
-                  - backup_script_result.stat.pw_name == 'command_undefined'
-                  - backup_script_result.stat.gr_name == 'command_undefined'
-                  - backup_script_result.stat.executable
-        - name: Test backup data directory:test_command_undefined
-          block:
-            - name: Check backup data directory:test_command_undefined
-              ansible.builtin.stat:
-                path: "{{ backup_data_dir }}/test_command_undefined"
-              register: backup_data_dir_result
-            - name: Assert backup data directory:test_command_undefined
-              ansible.builtin.assert:
-                that:
-                  - backup_data_dir_result.stat.exists
-                  - backup_data_dir_result.stat.isdir
-                  - backup_data_dir_result.stat.writeable
-                  - backup_data_dir_result.stat.pw_name == 'command_undefined'
-                  - backup_data_dir_result.stat.gr_name == 'command_undefined'
-        - name: Test repository password file:test_command_undefined
-          block:
-            - name: Check repository password file:test_command_undefined
-              ansible.builtin.stat:
-                path: "{{ backup_repo_password_dir }}/test_command_undefined"
-              register: repo_password_file_result
-            - name: Assert repository password file:test_command_undefined
-              ansible.builtin.assert:
-                that:
-                  - not repo_password_file_result.stat.exists
-        - name: Test repository directory:test_command_undefined
-          block:
-            - name: Check repository directory:test_command_undefined
-              ansible.builtin.stat:
-                path: "{{ backup_repo_dir }}/test_command_undefined"
-              register: backup_repo_dir_result
-            - name: Assert repository directory:test_command_undefined
-              ansible.builtin.assert:
-                that:
-                  - not backup_repo_dir_result.stat.exists
-        - name: Test cron setting:test_command_undefined
-          block:
-            - name: Check cron setting:test_command_undefined
-              ansible.builtin.shell:
-                cmd: |
-                  set -o pipefail
-                  crontab -l | grep "#Ansible: role:backup/setting:test_command_undefined"
-                executable: /bin/bash
-              failed_when: cron_setting_result.rc > 1
-              changed_when: false
-              register: cron_setting_result
-            - name: Assert cron setting:test_command_undefined
-              ansible.builtin.assert:
-                that: cron_setting_result.rc == 0
-        - name: Test backup script detail:test_command_undefined
-          block:
-            - name: Check backup command section:test_command_undefined
-              ansible.builtin.command:
-                cmd: grep "## バックアップ処理" "{{ backup_script_dir }}/test_command_undefined"
-              failed_when: backup_command_result.rc > 1
-              changed_when: false
-              register: backup_command_result
-            - name: Assert backup command section:test_command_undefined
-              ansible.builtin.assert:
-                that: backup_command_result.rc == 1
-            - name: Execute backup script:test_command_undefined
-              ansible.builtin.command:
-                cmd: "{{ backup_script_dir }}/test_command_undefined"
-              changed_when: false
-              register: exec_backup_script_result
-            - name: Assert execute backup script result:test_command_undefined
-              ansible.builtin.assert:
-                that: exec_backup_script_result.rc == 0
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
     - name: Test command only
       become: true

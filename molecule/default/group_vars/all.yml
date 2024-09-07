@@ -1,11 +1,5 @@
 ---
 backup_settings:
-  ## バックアップ処理の指定：無し、バックアップデータの世代管理：無し
-  test_command_undefined:
-    user: command_undefined
-    cron:
-      hour: 1
-      minute: 23
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
   test_command_only:
     user: command_only
