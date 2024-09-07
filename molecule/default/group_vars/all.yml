@@ -22,6 +22,15 @@ backup_settings:
     restic:
       target: /home/restic_only/dummy
       repo_password: n0m@l_p@55w0rd
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+  test_restic_default:
+    user: restic_default
+    cron:
+      hour: 1
+      minute: 23
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
+    restic:
+      repo_password: very_5tr0ng_p@55w0rd
   ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_only_with_rclone:
@@ -42,15 +51,6 @@ backup_settings:
         region: auto
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
-  ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
-  test_restic_default:
-    user: restic_default
-    cron:
-      hour: 1
-      minute: 23
-    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
-    restic:
-      repo_password: very_5tr0ng_p@55w0rd
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## keepパラメーターの指定による世代数の指定有り
   test_restic_forget_keep_param:
@@ -86,7 +86,7 @@ backup_settings:
       forget_keep_type: hourly
       forget_keep_value: 24
       forget_other_options:
-        - --keep-daily 3
+        - --keep-within-daily 7d
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_and_rclone:

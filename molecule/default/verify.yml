@@ -9,6 +9,7 @@
     backup_script_dir: "{{ backup_base_dir }}/script"
     backup_data_dir: "{{ backup_base_dir }}/data"
     backup_repo_dir: "{{ backup_base_dir }}/repo"
+    backup_repo_password_dir: "{{ backup_base_dir }}/password"
   tasks:
     ## テストの前処理
     - name: Gather package facts
@@ -19,33 +20,58 @@
         that:
           - ansible_facts.packages['rclone'] is defined
           - ansible_facts.packages['restic'] is defined
+    ## バックアップ処理の指定：無し、バックアップデータの世代管理：無し
     - name: Test command undefined
       become: true
       become_user: command_undefined
       block:
-        - name: Check backup script:test_command_undefined
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_command_undefined"
-          register: backup_script_result
-        - name: Assert backup script:test_command_undefined
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'command_undefined'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_command_undefined
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_command_undefined"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_command_undefined
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'command_undefined'
-        - name: Test cron setting
+        - name: Test backup script:test_command_undefined
+          block:
+            - name: Check backup script:test_command_undefined
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_command_undefined"
+              register: backup_script_result
+            - name: Assert backup script:test_command_undefined
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'command_undefined'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_command_undefined
+          block:
+            - name: Check backup data directory:test_command_undefined
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_command_undefined"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_command_undefined
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'command_undefined'
+        - name: Test repository password file:test_command_undefined
+          block:
+            - name: Check repository password file:test_command_undefined
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_command_undefined"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_command_undefined
+              ansible.builtin.assert:
+                that:
+                  - not repo_password_file_result.stat.exists
+        - name: Test repository directory:test_command_undefined
+          block:
+            - name: Check repository directory:test_command_undefined
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_command_undefined"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_command_undefined
+              ansible.builtin.assert:
+                that:
+                  - not backup_repo_dir_result.stat.exists
+        - name: Test cron setting:test_command_undefined
           block:
             - name: Check cron setting:test_command_undefined
               ansible.builtin.shell:
@@ -59,7 +85,7 @@
             - name: Assert cron setting:test_command_undefined
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_command_undefined
           block:
             - name: Check backup command section:test_command_undefined
               ansible.builtin.command:
@@ -78,33 +104,58 @@
             - name: Assert execute backup script result:test_command_undefined
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+  ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
     - name: Test command only
       become: true
       become_user: command_only
       block:
-        - name: Check backup script:test_command_only
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_command_only"
-          register: backup_script_result
-        - name: Assert backup script:test_command_only
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'command_only'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_command_only
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_command_only"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_command_only
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'command_only'
-        - name: Test cron setting
+        - name: Test backup script:test_command_only
+          block:
+            - name: Check backup script:test_command_only
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_command_only"
+              register: backup_script_result
+            - name: Assert backup script:test_command_only
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'command_only'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_command_only
+          block:
+            - name: Check backup data directory:test_command_only
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_command_only"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_command_only
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'command_only'
+        - name: Test repository password file:test_command_only
+          block:
+            - name: Check repository password file:test_command_only
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_command_only"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_command_only
+              ansible.builtin.assert:
+                that:
+                  - not repo_password_file_result.stat.exists
+        - name: Test repository directory:test_command_only
+          block:
+            - name: Check repository directory:test_command_only
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_command_only"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_command_only
+              ansible.builtin.assert:
+                that:
+                  - not backup_repo_dir_result.stat.exists
+        - name: Test cron setting:test_command_only
           block:
             - name: Check cron setting:test_command_only
               ansible.builtin.shell:
@@ -118,7 +169,7 @@
             - name: Assert cron setting:test_command_only
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_command_only
           block:
             - name: Check backup command section:test_command_only
               ansible.builtin.command:
@@ -147,26 +198,64 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'command_only'
+    ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
     - name: Test restic only
       become: true
       become_user: restic_only
       block:
-        - name: Check backup script:test_restic_only
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_only"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_only
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_only'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_only
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_only"
-          register: backup_data_dir_result
-        - name: Test cron setting
+        - name: Test backup script:test_restic_only
+          block:
+            - name: Check backup script:test_restic_only
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_only"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_only'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_only
+          block:
+            - name: Check backup data directory:test_restic_only
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_only"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_only'
+        - name: Test repository password file:test_restic_only
+          block:
+            - name: Check repository password file:test_restic_only
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_only"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_only'
+        - name: Test repository directory:test_restic_only
+          block:
+            - name: Check repository directory:test_restic_only
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_only"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'restic_only'
+        - name: Test cron setting:test_restic_only
           block:
             - name: Check cron setting:test_restic_only
               ansible.builtin.shell:
@@ -180,7 +269,7 @@
             - name: Assert cron setting:test_restic_only
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_restic_only
           block:
             - name: Check backup command section:test_restic_only
               ansible.builtin.command:
@@ -199,26 +288,162 @@
             - name: Assert execute backup script result:test_restic_only
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+    ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+    - name: Test restic default
+      become: true
+      become_user: restic_default
+      block:
+        - name: Test backup script:test_restic_default
+          block:
+            - name: Check backup script:test_restic_default
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_default"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_default
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_default'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_default
+          block:
+            - name: Check backup data directory:test_restic_default
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_default"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_default'
+        - name: Test repository password file:test_restic_default
+          block:
+            - name: Check repository password file:test_restic_default
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_default"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_default
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_default'
+        - name: Test repository directory:test_restic_default
+          block:
+            - name: Check repository directory:test_restic_default
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_default"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_default
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'restic_default'
+        - name: Test cron setting:test_restic_default
+          block:
+            - name: Check cron setting:test_restic_default
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "#Ansible: role:backup/setting:test_restic_default"
+                executable: /bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_restic_default
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 0
+        - name: Test backup script detail:test_restic_default
+          block:
+            - name: Check backup command section:test_restic_default
+              ansible.builtin.command:
+                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_default"
+              failed_when: backup_command_result.rc > 1
+              changed_when: false
+              register: backup_command_result
+            - name: Assert backup command:test_restic_default
+              ansible.builtin.assert:
+                that: backup_command_result.rc == 0
+            - name: Execute backup script:test_restic_default
+              ansible.builtin.command:
+                cmd: "{{ backup_script_dir }}/test_restic_default"
+              changed_when: false
+              register: exec_backup_script_result
+            - name: Assert execute backup script result:test_restic_default
+              ansible.builtin.assert:
+                that: exec_backup_script_result.rc == 0
+            - name: Check backup script generated file:test_restic_default
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_default/test.txt"
+              register: backup_script_generated_file_result
+            - name: Assert backup script generated file:test_restic_default
+              ansible.builtin.assert:
+                that:
+                  - backup_script_generated_file_result.stat.exists
+                  - backup_script_generated_file_result.stat.isreg
+                  - backup_script_generated_file_result.stat.pw_name == 'restic_default'
+    ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
+    ## 外部ストレージ(rclone経由)を利用した世代管理の指定
     - name: Test restic only with rclone
       become: true
       become_user: restic_only_with_rclone
       block:
-        - name: Check backup script:test_restic_only_with_rclone
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_only_with_rclone"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_only_with_rclone
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_only_with_rclone'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_only_with_rclone
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_only_with_rclone"
-          register: backup_data_dir_result
-        - name: Test cron setting
+        - name: Test backup script:test_restic_only_with_rclone
+          block:
+            - name: Check backup script:test_restic_only_with_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_only_with_rclone"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_only_with_rclone'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_only_with_rclone
+          block:
+            - name: Check backup data directory:test_restic_only_with_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_only_with_rclone"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_only_with_rclone'
+        - name: Test repository password file:test_restic_only_with_rclone
+          block:
+            - name: Check repository password file:test_restic_only_with_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_only_with_rclone"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_only_with_rclone'
+        - name: Test repository directory:test_restic_only_with_rclone
+          block:
+            - name: Check repository directory:test_restic_only_with_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_only_with_rclone"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_only_with_rclone
+              ansible.builtin.assert:
+                that:
+                  - not backup_repo_dir_result.stat.exists
+        - name: Test cron setting:test_restic_only_with_rclone
           block:
             - name: Check cron setting:test_restic_only_with_rclone
               ansible.builtin.shell:
@@ -232,7 +457,7 @@
             - name: Assert cron setting:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test rclone config
+        - name: Test rclone config:test_restic_only_with_rclone
           block:
             - name: Check ~/.config/rclone/rclone.conf:test_restic_only_with_rclone
               ansible.builtin.stat:
@@ -281,7 +506,7 @@
             - name: Assert rclone config endpoint:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: rclone_config_endpoint.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_restic_only_with_rclone
           block:
             - name: Check backup command section:test_restic_only_with_rclone
               ansible.builtin.command:
@@ -300,102 +525,65 @@
             - name: Assert execute backup script result:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
-    - name: Test restic default
-      become: true
-      become_user: restic_default
-      block:
-        - name: Check backup script:test_restic_default
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_default"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_default
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_default'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_default
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_default"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_restic_default
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'restic_default'
-        - name: Test cron setting
-          block:
-            - name: Check cron setting:test_restic_default
-              ansible.builtin.shell:
-                cmd: |
-                  set -o pipefail
-                  crontab -l | grep "#Ansible: role:backup/setting:test_restic_default"
-                executable: /bin/bash
-              failed_when: cron_setting_result.rc > 1
-              changed_when: false
-              register: cron_setting_result
-            - name: Assert cron setting:test_restic_default
-              ansible.builtin.assert:
-                that: cron_setting_result.rc == 0
-        - name: Test backup script detail
-          block:
-            - name: Check backup command section:test_restic_default
-              ansible.builtin.command:
-                cmd: grep "rclone test makefile 1234" "{{ backup_script_dir }}/test_restic_default"
-              failed_when: backup_command_result.rc > 1
-              changed_when: false
-              register: backup_command_result
-            - name: Assert backup command:test_restic_default
-              ansible.builtin.assert:
-                that: backup_command_result.rc == 0
-            - name: Execute backup script:test_restic_default
-              ansible.builtin.command:
-                cmd: "{{ backup_script_dir }}/test_restic_default"
-              changed_when: false
-              register: exec_backup_script_result
-            - name: Assert execute backup script result:test_restic_default
-              ansible.builtin.assert:
-                that: exec_backup_script_result.rc == 0
-            - name: Check backup script generated file:test_restic_default
-              ansible.builtin.stat:
-                path: "{{ backup_data_dir }}/test_restic_default/test.txt"
-              register: backup_script_generated_file_result
-            - name: Assert backup script generated file:test_restic_default
-              ansible.builtin.assert:
-                that:
-                  - backup_script_generated_file_result.stat.exists
-                  - backup_script_generated_file_result.stat.isreg
-                  - backup_script_generated_file_result.stat.pw_name == 'restic_default'
+    ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+    ## keepパラメーターの指定による世代数の指定有り
     - name: Test restic forget keep param
       become: true
       become_user: restic_forget_keep_param
       block:
-        - name: Check backup script:test_restic_forget_keep_param
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_forget_keep_param"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_forget_keep_param
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_forget_keep_param'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_forget_keep_param
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_forget_keep_param"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_restic_forget_keep_param
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'restic_forget_keep_param'
-        - name: Test cron setting
+        - name: Test backup script:test_restic_forget_keep_param
+          block:
+            - name: Check backup script:test_restic_forget_keep_param
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_forget_keep_param"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_forget_keep_param
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_forget_keep_param'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_forget_keep_param
+          block:
+            - name: Check backup data directory:test_restic_forget_keep_param
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_forget_keep_param"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_forget_keep_param
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_forget_keep_param'
+        - name: Test repository password file:test_restic_forget_keep_param
+          block:
+            - name: Check repository password file:test_restic_forget_keep_param
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_forget_keep_param"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_forget_keep_param
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_forget_keep_param'
+        - name: Test repository directory:test_restic_forget_keep_param
+          block:
+            - name: Check repository directory:test_restic_forget_keep_param
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_forget_keep_param"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_forget_keep_param
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'restic_forget_keep_param'
+        - name: Test cron setting:test_restic_forget_keep_param
           block:
             - name: Check cron setting:test_restic_forget_keep_param
               ansible.builtin.shell:
@@ -409,7 +597,7 @@
             - name: Assert cron setting:test_restic_forget_keep_param
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_restic_forget_keep_param
           block:
             - name: Check backup command section:test_restic_forget_keep_param
               ansible.builtin.command:
@@ -447,33 +635,65 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_forget_keep_param'
+    ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+    ## バックアップ終了後に`restic forget`を実行しない
     - name: Test restic no forget
       become: true
       become_user: restic_no_forget
       block:
-        - name: Check backup script:test_restic_no_forget
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_no_forget"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_no_forget
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_no_forget'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_no_forget
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_no_forget"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_restic_no_forget
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'restic_no_forget'
-        - name: Test cron setting
+        - name: Test backup script:test_restic_no_forget
+          block:
+            - name: Check backup script:test_restic_no_forget
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_no_forget"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_no_forget
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_no_forget'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_no_forget
+          block:
+            - name: Check backup data directory:test_restic_no_forget
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_no_forget"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_no_forget
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_no_forget'
+        - name: Test repository password file:test_restic_no_forget
+          block:
+            - name: Check repository password file:test_restic_no_forget
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_no_forget"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_no_forget
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_no_forget'
+        - name: Test repository directory:test_restic_no_forget
+          block:
+            - name: Check repository directory:test_restic_no_forget
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_no_forget"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_no_forget
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'restic_no_forget'
+        - name: Test cron setting:test_restic_no_forget
           block:
             - name: Check cron setting:test_restic_no_forget
               ansible.builtin.shell:
@@ -487,7 +707,7 @@
             - name: Assert cron setting:test_restic_no_forget
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_restic_no_forget
           block:
             - name: Check backup command section:test_restic_no_forget
               ansible.builtin.command:
@@ -525,33 +745,65 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_no_forget'
+    ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+    ## 過去3日以内の日次スナップショットと、直近24時間以内の時間毎スナップショットを残してスナップショットをクリーンアップする
     - name: Test restic other forget option
       become: true
       become_user: restic_other_forget_option
       block:
-        - name: Check backup script:test_restic_other_forget_option
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_other_forget_option"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_other_forget_option
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_other_forget_option'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_other_forget_option
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_other_forget_option"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_restic_other_forget_option
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'restic_other_forget_option'
-        - name: Test cron setting
+        - name: Test backup script:test_restic_other_forget_option
+          block:
+            - name: Check backup script:test_restic_other_forget_option
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_other_forget_option"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_other_forget_option'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_other_forget_option
+          block:
+            - name: Check backup data directory:test_restic_other_forget_option
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_other_forget_option"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_other_forget_option'
+        - name: Test repository password file:test_restic_other_forget_option
+          block:
+            - name: Check repository password file:test_restic_other_forget_option
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_other_forget_option"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_other_forget_option'
+        - name: Test repository directory:test_restic_other_forget_option
+          block:
+            - name: Check repository directory:test_restic_other_forget_option
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_other_forget_option"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_other_forget_option
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'restic_other_forget_option'
+        - name: Test cron setting:test_restic_other_forget_option
           block:
             - name: Check cron setting:test_restic_other_forget_option
               ansible.builtin.shell:
@@ -565,7 +817,7 @@
             - name: Assert cron setting:test_restic_other_forget_option
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_restic_other_forget_option
           block:
             - name: Check backup command section:test_restic_other_forget_option
               ansible.builtin.command:
@@ -578,7 +830,7 @@
                 that: backup_command_result.rc == 0
             - name: Check restic forget command:test_restic_other_forget_option
               ansible.builtin.command:
-                cmd: grep "restic forget --keep-hourly 24 --keep-daily 3 --prune" "{{ backup_script_dir }}/test_restic_other_forget_option"
+                cmd: grep "restic forget --keep-hourly 24 --keep-within-daily 7d --prune" "{{ backup_script_dir }}/test_restic_other_forget_option"
               failed_when: restic_forget_command_result.rc > 1
               changed_when: false
               register: restic_forget_command_result
@@ -603,33 +855,62 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_other_forget_option'
+    ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
+    ## 外部ストレージ(rclone経由)を利用した世代管理の指定
     - name: Test restic and rclone
       become: true
       become_user: restic_and_rclone
       block:
-        - name: Check backup script:test_restic_and_rclone
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_restic_and_rclone"
-          register: backup_script_result
-        - name: Assert backup script:test_restic_and_rclone
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'restic_and_rclone'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_restic_and_rclone
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_restic_and_rclone"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_restic_and_rclone
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'restic_and_rclone'
-        - name: Test cron setting
+        - name: Test backup script:test_restic_and_rclone
+          block:
+            - name: Check backup script:test_restic_and_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_restic_and_rclone"
+              register: backup_script_result
+            - name: Assert backup script:test_restic_and_rclone
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'restic_and_rclone'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_restic_and_rclone
+          block:
+            - name: Check backup data directory:test_restic_and_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_restic_and_rclone"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_and_rclone
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'restic_and_rclone'
+        - name: Test repository password file:test_restic_and_rclone
+          block:
+            - name: Check repository password file:test_restic_and_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_restic_and_rclone"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_restic_and_rclone
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'restic_and_rclone'
+        - name: Test repository directory:test_restic_and_rclone
+          block:
+            - name: Check repository directory:test_restic_and_rclone
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_restic_and_rclone"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_restic_and_rclone
+              ansible.builtin.assert:
+                that:
+                  - not backup_repo_dir_result.stat.exists
+        - name: Test cron setting:test_restic_and_rclone
           block:
             - name: Check cron setting:test_restic_and_rclone
               ansible.builtin.shell:
@@ -643,7 +924,7 @@
             - name: Assert cron setting:test_restic_and_rclone
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test rclone config
+        - name: Test rclone config:test_restic_and_rclone
           block:
             - name: Check ~/.config/rclone/rclone.conf:test_restic_and_rclone
               ansible.builtin.stat:
@@ -692,7 +973,7 @@
             - name: Assert rclone config endpoint:test_restic_and_rclone
               ansible.builtin.assert:
                 that: rclone_config_endpoint.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:test_restic_and_rclone
           block:
             - name: Check backup command section:test_restic_and_rclone
               ansible.builtin.command:
@@ -721,33 +1002,64 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_and_rclone'
+    ## 定期実行の指定：なし
     - name: Test no schdule
       become: true
       become_user: no_schdule
       block:
-        - name: Check backup script:test_no_schdule
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_no_schdule"
-          register: backup_script_result
-        - name: Assert backup script:test_no_schdule
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'no_schdule'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:test_no_schdule
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_no_schdule"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_no_schdule
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'no_schdule'
-        - name: Test cron setting
+        - name: Test backup script:test_no_schdule
+          block:
+            - name: Check backup script:test_no_schdule
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_no_schdule"
+              register: backup_script_result
+            - name: Assert backup script:test_no_schdule
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'no_schdule'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_no_schdule
+          block:
+            - name: Check backup data directory:test_no_schdule
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_no_schdule"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_no_schdule
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'no_schdule'
+        - name: Test repository password file:test_no_schdule
+          block:
+            - name: Check repository password file:test_no_schdule
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_no_schdule"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_no_schdule
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'no_schdule'
+        - name: Test repository directory:test_no_schdule
+          block:
+            - name: Check repository directory:test_no_schdule
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_no_schdule"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_no_schdule
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'no_schdule'
+        - name: Test cron setting:test_no_schdule
           block:
             - name: Check cron setting:test_no_schdule
               ansible.builtin.shell:
@@ -765,72 +1077,125 @@
       become: true
       become_user: shared_data_and_repo_main
       block:
-        - name: Check backup script:test_shared_data_and_repo
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/test_shared_data_and_repo"
-          register: backup_script_result
-        - name: Assert backup script:test_shared_data_and_repo
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'shared_data_and_repo_main'
-              - backup_script_result.stat.gr_name == 'shared_data_and_repo'
-              - backup_script_result.stat.executable
-              - backup_script_result.stat.mode == '0700'
-        - name: Check backup data directory:test_shared_data_and_repo
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/test_shared_data_and_repo"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:test_shared_data_and_repo
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.gr_name == 'shared_data_and_repo'
-              - backup_data_dir_result.stat.pw_name == 'shared_data_and_repo_main'
-              - backup_data_dir_result.stat.mode == '0750'
-        - name: Check backup repository directory:test_shared_data_and_repo
-          ansible.builtin.stat:
-            path: "{{ backup_repo_dir }}/test_shared_data_and_repo"
-          register: backup_repo_dir_result
-        - name: Assert backup data directory:test_shared_data_and_repo
-          ansible.builtin.assert:
-            that:
-              - backup_repo_dir_result.stat.exists
-              - backup_repo_dir_result.stat.isdir
-              - backup_repo_dir_result.stat.writeable
-              - backup_repo_dir_result.stat.gr_name == 'shared_data_and_repo'
-              - backup_repo_dir_result.stat.pw_name == 'shared_data_and_repo_main'
-              - backup_repo_dir_result.stat.mode == '0750'
+        - name: Test backup script:test_shared_data_and_repo
+          block:
+            - name: Check backup script:test_shared_data_and_repo
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_shared_data_and_repo"
+              register: backup_script_result
+            - name: Assert backup script:test_shared_data_and_repo
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - backup_script_result.stat.gr_name == 'shared_data_and_repo'
+                  - backup_script_result.stat.executable
+                  - backup_script_result.stat.mode == '0700'
+        - name: Test backup data directory:test_shared_data_and_repo
+          block:
+            - name: Check backup data directory:test_shared_data_and_repo
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_shared_data_and_repo"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_shared_data_and_repo
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.gr_name == 'shared_data_and_repo'
+                  - backup_data_dir_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - backup_data_dir_result.stat.mode == '0750'
+
+        - name: Test repository password file:test_shared_data_and_repo
+          block:
+            - name: Check repository password file:test_shared_data_and_repo
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_shared_data_and_repo"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_shared_data_and_repo
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.gr_name == 'shared_data_and_repo'
+                  - repo_password_file_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - repo_password_file_result.stat.mode == '0640'
+        - name: Test repository directory:test_shared_data_and_repo
+          block:
+            - name: Check repository directory:test_shared_data_and_repo
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_shared_data_and_repo"
+              register: backup_repo_dir_result
+            - name: Assert backup data directory:test_shared_data_and_repo
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.gr_name == 'shared_data_and_repo'
+                  - backup_repo_dir_result.stat.pw_name == 'shared_data_and_repo_main'
+                  - backup_repo_dir_result.stat.mode == '0750'
+    ## 設定例：WordPress
     - name: Test wordpress
       become: true
       become_user: wordpress
       block:
-        - name: Check backup script:redmine
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/wordpress"
-          register: backup_script_result
-        - name: Assert backup script:wordpress
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'wordpress'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:wordpress
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/wordpress"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:wordpress
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'wordpress'
-        - name: Test cron setting
+        - name: Test backup script:wordpress
+          block:
+            - name: Check backup script:wordpress
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/wordpress"
+              register: backup_script_result
+            - name: Assert backup script:wordpress
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'wordpress'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:wordpress
+          block:
+            - name: Check backup data directory:wordpress
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/wordpress"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:wordpress
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'wordpress'
+        - name: Test repository password file:wordpress
+          block:
+            - name: Check repository password file:wordpress
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/wordpress"
+              register: repo_password_file_result
+            - name: Assert repository password file:wordpress
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'wordpress'
+        - name: Test repository directory:wordpress
+          block:
+            - name: Check repository directory:wordpress
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/wordpress"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:wordpress
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'wordpress'
+        - name: Test cron setting:wordpress
           block:
             - name: Check cron setting:wordpress
               ansible.builtin.shell:
@@ -844,7 +1209,7 @@
             - name: Assert cron setting:wordpress
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:wordpress
           block:
             - name: Check backup command section:wordpress
               ansible.builtin.command:
@@ -863,33 +1228,64 @@
             - name: Assert execute backup script result:wordpress
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+    ## 設定例：Redmine
     - name: Test redmine
       become: true
       become_user: redmine
       block:
-        - name: Check backup script:redmine
-          ansible.builtin.stat:
-            path: "{{ backup_script_dir }}/redmine"
-          register: backup_script_result
-        - name: Assert backup script:redmine
-          ansible.builtin.assert:
-            that:
-              - backup_script_result.stat.exists
-              - backup_script_result.stat.isreg
-              - backup_script_result.stat.pw_name == 'redmine'
-              - backup_script_result.stat.executable
-        - name: Check backup data directory:redmine
-          ansible.builtin.stat:
-            path: "{{ backup_data_dir }}/redmine"
-          register: backup_data_dir_result
-        - name: Assert backup data directory:redmine
-          ansible.builtin.assert:
-            that:
-              - backup_data_dir_result.stat.exists
-              - backup_data_dir_result.stat.isdir
-              - backup_data_dir_result.stat.writeable
-              - backup_data_dir_result.stat.pw_name == 'redmine'
-        - name: Test cron setting
+        - name: Test backup script:redmine
+          block:
+            - name: Check backup script:redmine
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/redmine"
+              register: backup_script_result
+            - name: Assert backup script:redmine
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'redmine'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:redmine
+          block:
+            - name: Check backup data directory:redmine
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/redmine"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:redmine
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'redmine'
+        - name: Test repository password file:redmine
+          block:
+            - name: Check repository password file:redmine
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/redmine"
+              register: repo_password_file_result
+            - name: Assert repository password file:redmine
+              ansible.builtin.assert:
+                that:
+                  - repo_password_file_result.stat.exists
+                  - repo_password_file_result.stat.isreg
+                  - repo_password_file_result.stat.writeable
+                  - repo_password_file_result.stat.pw_name == 'redmine'
+        - name: Test repository directory:redmine
+          block:
+            - name: Check repository directory:redmine
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/redmine"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:redmine
+              ansible.builtin.assert:
+                that:
+                  - backup_repo_dir_result.stat.exists
+                  - backup_repo_dir_result.stat.isdir
+                  - backup_repo_dir_result.stat.writeable
+                  - backup_repo_dir_result.stat.pw_name == 'redmine'
+        - name: Test cron setting:redmine
           block:
             - name: Check cron setting:redmine
               ansible.builtin.shell:
@@ -903,7 +1299,7 @@
             - name: Assert cron setting:redmine
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
-        - name: Test rclone config
+        - name: Test rclone config:redmine
           block:
             - name: Check ~/.config/rclone/rclone.conf:redmine
               ansible.builtin.stat:
@@ -952,7 +1348,7 @@
             - name: Assert rclone config endpoint:redmine
               ansible.builtin.assert:
                 that: rclone_config_endpoint.rc == 0
-        - name: Test backup script detail
+        - name: Test backup script detail:redmine
           block:
             - name: Check backup command section:redmine
               ansible.builtin.command:

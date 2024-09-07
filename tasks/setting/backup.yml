@@ -39,6 +39,27 @@
       when:
         - restic_repo_type == 'local'
         - backup_setting.restic.repo is undefined
+    - name: Create/update repository password file
+      ansible.builtin.template:
+        src: password_file.j2
+        dest: "{{ backup_repo_password_dir }}/{{ backup_setting_name }}"
+        owner: "{{ backup_setting.user }}"
+        group: "{{ backup_setting.group | default(omit) }}"
+        mode: "0640"
+      register: password_file_result
+      vars:
+        restic_repo_password: "{{ backup_setting.restic.repo_password }}"
+    - name: Set repository password
+      ansible.builtin.command:
+        cmd: restic key passwd
+        removes: "{{ backup_repo_dir }}/{{ backup_setting_name }}/config"
+      environment:
+        RESTIC_REPOSITORY: "{{ backup_repo_dir }}/{{ backup_setting_name }}"
+        RESTIC_PASSWORD_FILE: "{{ backup_repo_password_dir }}/{{ backup_setting_name }}"
+      when:
+        - restic_repo_type == 'local'
+        - backup_setting.restic.repo is undefined
+        - password_file_result is changed
 - name: Create/update rclone setting:{{ backup_setting_name }}
   when: backup_setting.rclone is defined
   become: true
