@@ -41,16 +41,13 @@ export RESTIC_PASSWORD_FILE="{{ backup_repo_password_dir }}/{{ backup_setting_na
 {% if backup_setting.init_options is defined -%}
 {% set restic_init_options = restic_init_options + backup_setting.init_options %}
 {% endif %}
-{% if restic_repo_type == 'local' -%}
-if [ ! -e "${RESTIC_REPOSITORY}/config" ]; then
+## @see https://restic.readthedocs.io/en/stable/075_scripting.html#check-if-a-repository-is-already-initialized
+set +e
+restic cat config
+set -e
+if [ $? -eq 10 ]; then
   restic init {{ restic_init_options | join(' ') }}
 fi
-{% elif restic_repo_type == 'rclone' -%}
-RCLONE_CAT_RESULT=$(rclone cat "{{ restic_repo }}/config")
-if [ -z "${RCLONE_CAT_RESULT}" ]; then
-  restic init {{ restic_init_options | join(' ') }}
-fi
-{% endif %}
 
 ### スナップショットの作成
 {% set restic_backup_options = restic_backup_common_options | default([]) -%}
