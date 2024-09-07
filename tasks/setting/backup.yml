@@ -3,6 +3,13 @@
   ansible.builtin.set_fact:
     backup_setting_name: "{{ backup_cfg.key }}"
     backup_setting: "{{ backup_cfg.value }}"
+- name: Assert backup setting:{{ backup_setting_name }}
+  ansible.builtin.assert:
+    that: >
+      backup_setting.command is defined
+      or
+      backup_setting.restic is defined
+    quiet: true
 - name: Create backup data directory:{{ backup_setting_name }}
   ansible.builtin.file:
     path: "{{ backup_data_dir }}/{{ backup_setting_name }}"
