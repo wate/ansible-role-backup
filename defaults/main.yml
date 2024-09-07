@@ -15,9 +15,14 @@ backup_script_dir: "{{ backup_base_dir }}/script"
 backup_data_dir: "{{ backup_base_dir }}/data"
 
 ## -----------------
-## バックアップの世代管理用ディレクトリ
+## バックアップデータの世代管理(リポジトリ)用ディレクトリ
 ## -----------------
 backup_repo_dir: "{{ backup_base_dir }}/repo"
+
+## -----------------
+## リポジトリのパスワード用ディレクトリ
+## -----------------
+backup_repo_password_dir: "{{ backup_base_dir }}/password"
 
 ## -----------------
 ## リポジトリ種別の初期値

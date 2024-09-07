@@ -30,7 +30,11 @@ Role Variables
 
 ### `backup_repo_dir`
 
-バックアップの世代管理用ディレクトリ
+バックアップデータの世代管理(リポジトリ)用ディレクトリ
+
+### `backup_repo_password_dir`
+
+リポジトリのパスワード用ディレクトリ
 
 ### `backup_restic_default_repo_type`
 
@@ -52,6 +56,10 @@ Role Variables
 ### `backup_settings`
 
 バックアップ設定
+
+### `backup_restic_init_common_options`
+
+`restic init`実行時の共通オプション
 
 ### `backup_restic_backup_common_options`
 
