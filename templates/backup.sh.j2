@@ -34,7 +34,7 @@ cd "${BASE_DIR}"
 {% set restic_repo = restic_setting.repo | default(backup_repo_dir + '/' + backup_setting_name) -%}
 ### リポジトリ
 export RESTIC_REPOSITORY="{{ (restic_repo_type == 'local') | ternary(restic_repo, restic_repo_type + ':' + restic_repo) }}"
-### リポジトリのパスワード
+### リポジトリのパスワードファイル
 export RESTIC_PASSWORD_FILE="{{ backup_repo_password_dir }}/{{ backup_setting_name }}"
 ### リポジトリのチェック及び初期化
 {% set restic_init_options = backup_restic_init_common_options | default([]) %}
