@@ -16,6 +16,7 @@
     - name: Set setting variables
       ansible.builtin.set_fact:
         restic_repo_type: "{{ backup_setting.restic.repo_type | default(backup_restic_default_repo_type) }}"
+        restic_repo: "{{ backup_setting.restic.repo | default(backup_repo_dir + '/' + backup_setting_name) }}"
         restic_forget_keep_type: "{{ backup_setting.restic.forget_keep_type | default(backup_restic_default_forget_keep_type) }}"
     - name: Assert restic setting:{{ backup_setting_name }}
       ansible.builtin.assert:
@@ -31,14 +32,12 @@
         quiet: true
     - name: Create backup repository directory:{{ backup_setting_name }}
       ansible.builtin.file:
-        path: "{{ backup_repo_dir }}/{{ backup_setting_name }}"
+        path: "{{ restic_repo }}"
         state: directory
         owner: "{{ backup_setting.user }}"
         group: "{{ backup_setting.group | default(omit) }}"
         mode: "0750"
-      when:
-        - restic_repo_type == 'local'
-        - backup_setting.restic.repo is undefined
+      when: restic_repo_type == 'local'
     - name: Create/update repository password file
       ansible.builtin.template:
         src: password_file.j2
@@ -52,13 +51,12 @@
     - name: Set repository password
       ansible.builtin.command:
         cmd: restic key passwd
-        removes: "{{ backup_repo_dir }}/{{ backup_setting_name }}/config"
+        removes: "{{ restic_repo }}/config"
       environment:
-        RESTIC_REPOSITORY: "{{ backup_repo_dir }}/{{ backup_setting_name }}"
+        RESTIC_REPOSITORY: "{{ restic_repo }}"
         RESTIC_PASSWORD_FILE: "{{ backup_repo_password_dir }}/{{ backup_setting_name }}"
       when:
         - restic_repo_type == 'local'
-        - backup_setting.restic.repo is undefined
         - password_file_result is changed
 - name: Create/update rclone setting:{{ backup_setting_name }}
   when: backup_setting.rclone is defined
