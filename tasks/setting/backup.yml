@@ -3,6 +3,13 @@
   ansible.builtin.set_fact:
     backup_setting_name: "{{ backup_cfg.key }}"
     backup_setting: "{{ backup_cfg.value }}"
+- name: Assert backup setting:{{ backup_setting_name }}
+  ansible.builtin.assert:
+    that: >
+      backup_setting.command is defined
+      or
+      backup_setting.restic is defined
+    quiet: true
 - name: Create backup data directory:{{ backup_setting_name }}
   ansible.builtin.file:
     path: "{{ backup_data_dir }}/{{ backup_setting_name }}"
@@ -105,15 +112,21 @@
     owner: "{{ backup_setting.user }}"
     group: "{{ backup_setting.group | default(backup_setting.user) }}"
     mode: "0700"
-- name: Set backup cron jobs:{{ backup_setting_name }}
-  ansible.builtin.cron:
-    user: "{{ backup_setting.user }}"
-    name: role:backup/setting:{{ backup_setting_name }}
-    job: "{{ backup_script_dir }}/{{ backup_setting_name }}"
-    month: "{{ backup_setting.cron.month | default(omit) }}"
-    day: "{{ backup_setting.cron.day | default(omit) }}"
-    hour: "{{ backup_setting.cron.hour | default(omit) }}"
-    minute: "{{ backup_setting.cron.minute | default(omit) }}"
-    weekday: "{{ backup_setting.cron.weekday | default(omit) }}"
-    disabled: "{{ backup_setting.cron.disabled | default(false) }}"
+- name: Set cron job
   when: backup_setting.cron is defined
+  block:
+    - name: Set cron job suffix variable
+      ansible.builtin.set_fact:
+        backup_cron_job_suffix: " {{ backup_setting.cron.job_suffix }}"
+      when: backup_setting.cron.job_suffix is defined
+    - name: Set backup cron jobs:{{ backup_setting_name }}
+      ansible.builtin.cron:
+        user: "{{ backup_setting.user }}"
+        name: role:backup/setting:{{ backup_setting_name }}
+        job: "{{ backup_script_dir }}/{{ backup_setting_name }}{{ backup_cron_job_suffix | default('') }}"
+        month: "{{ backup_setting.cron.month | default(omit) }}"
+        day: "{{ backup_setting.cron.day | default(omit) }}"
+        hour: "{{ backup_setting.cron.hour | default(omit) }}"
+        minute: "{{ backup_setting.cron.minute | default(omit) }}"
+        weekday: "{{ backup_setting.cron.weekday | default(omit) }}"
+        disabled: "{{ backup_setting.cron.disabled | default(false) }}"

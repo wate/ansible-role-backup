@@ -66,14 +66,19 @@ backup_settings: {}
   #   cron:
   #     hour: 1
   #     minute: 23
+  #     ## cronでのバックアップスクリプト実行処理に付け加える項目
+  #     ## 例：標準出力の内容を破棄しcronでのバックアップ処理実行時のメール送信を抑制する
+  #     # job_suffix: "1> /dev/null"
   #   ## バックアップ処理を実行時のディレクトリ(任意)
   #   ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }})
   #   # chdir: "{{ backup_data_dir }}/{{ backup_setting.key }}"
-  #   ## バックアップ処理のコマンド(任意)
+  #   ## バックアップ処理のコマンド
+  #   ## (※commandまたはresticどちらかの一方または両方の設定が必須です)
   #   command: |
   #     wp db export dump.sql --path /var/www/html
   #     tar vcfz uploads.tar.gz /var/www/html/wp-content/uploads
   #   ## resticを利用したバックアップデータの世代管理設定(任意)
+  #   ## (※commandまたはresticどちらかの一方または両方の設定が必須です)
   #   restic:
   #     ## バックアップ対象のディレクトリ
   #     ## (省略時：{{ backup_data_dir }}/{{ backup_setting.key }})

@@ -1,11 +1,5 @@
 ---
 backup_settings:
-  ## バックアップ処理の指定：無し、バックアップデータの世代管理：無し
-  test_command_undefined:
-    user: command_undefined
-    cron:
-      hour: 1
-      minute: 23
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
   test_command_only:
     user: command_only
@@ -23,14 +17,14 @@ backup_settings:
       target: /home/restic_only/dummy
       repo_password: test_restic_only_p@55w0rd
   ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
-  test_restic_default:
-    user: restic_default
+  test_command_and_restic:
+    user: command_and_restic
     cron:
       hour: 1
       minute: 23
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
-      repo_password: test_restic_default_p@55w0rd
+      repo_password: test_command_and_restic_p@55w0rd
   ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
   ## 外部ストレージ(rclone経由)を利用した世代管理の指定
   test_restic_only_with_rclone:
@@ -108,12 +102,20 @@ backup_settings:
         region: auto
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
-  ## 定期実行の指定：なし
+  ## cronでの定期実行：なし
   test_no_schdule:
     user: no_schdule
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_password: test_no_schdule_p@55w0rd
+  ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
+  test_cron_job_suffix:
+    user: cron_job_suffix
+    cron:
+      hour: 1
+      minute: 23
+      job_suffix: "1>/dev/null"
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
   ## バックアップデータの共有
   ## (同一のグループに所属するアカウントにはデータおよびリポジトリに対する読み取り権限有り)
   test_shared_data_and_repo:

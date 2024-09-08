@@ -13,7 +13,7 @@
 - name: Install rclone
   ansible.builtin.include_tasks: "{{ include_task_file }}"
   when: include_task_file | length > 0
-- name: Execute self update
+- name: Execute rclone self update
   ansible.builtin.command:
     cmd: rclone selfupdate
     removes: /usr/bin/rclone
