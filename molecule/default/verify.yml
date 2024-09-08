@@ -216,7 +216,7 @@
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
     - name: Test command and restic
       become: true
-      become_user: restic_default
+      become_user: command_and_restic
       block:
         - name: Test backup script:test_command_and_restic
           block:
@@ -959,7 +959,7 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_and_rclone'
-    ## 定期実行の指定：なし
+    ## cronでの定期実行：なし
     - name: Test no schdule
       become: true
       become_user: no_schdule
@@ -1036,6 +1036,75 @@
             - name: Assert cron setting:test_no_schdule
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 1
+    ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
+    - name: Test cron job suffix
+      become: true
+      become_user: cron_job_suffix
+      block:
+        - name: Test backup script:test_cron_job_suffix
+          block:
+            - name: Check backup script:test_cron_job_suffix
+              ansible.builtin.stat:
+                path: "{{ backup_script_dir }}/test_cron_job_suffix"
+              register: backup_script_result
+            - name: Assert backup script:test_cron_job_suffix
+              ansible.builtin.assert:
+                that:
+                  - backup_script_result.stat.exists
+                  - backup_script_result.stat.isreg
+                  - backup_script_result.stat.pw_name == 'cron_job_suffix'
+                  - backup_script_result.stat.gr_name == 'cron_job_suffix'
+                  - backup_script_result.stat.executable
+        - name: Test backup data directory:test_cron_job_suffix
+          block:
+            - name: Check backup data directory:test_cron_job_suffix
+              ansible.builtin.stat:
+                path: "{{ backup_data_dir }}/test_cron_job_suffix"
+              register: backup_data_dir_result
+            - name: Assert backup data directory:test_restic_only
+              ansible.builtin.assert:
+                that:
+                  - backup_data_dir_result.stat.exists
+                  - backup_data_dir_result.stat.isdir
+                  - backup_data_dir_result.stat.writeable
+                  - backup_data_dir_result.stat.pw_name == 'cron_job_suffix'
+                  - backup_data_dir_result.stat.gr_name == 'cron_job_suffix'
+        - name: Test repository password file:test_cron_job_suffix
+          block:
+            - name: Check repository password file:test_cron_job_suffix
+              ansible.builtin.stat:
+                path: "{{ backup_repo_password_dir }}/test_cron_job_suffix"
+              register: repo_password_file_result
+            - name: Assert repository password file:test_cron_job_suffix
+              ansible.builtin.assert:
+                that:
+                  - not repo_password_file_result.stat.exists
+        - name: Test repository directory:test_cron_job_suffix
+          block:
+            - name: Check repository directory:test_cron_job_suffix
+              ansible.builtin.stat:
+                path: "{{ backup_repo_dir }}/test_cron_job_suffix"
+              register: backup_repo_dir_result
+            - name: Assert repository directory:test_cron_job_suffix
+              ansible.builtin.assert:
+                that:
+                  - not backup_repo_dir_result.stat.exists
+        - name: Test cron setting:test_cron_job_suffix
+          block:
+            - name: Check cron setting:test_cron_job_suffix
+              ansible.builtin.shell:
+                cmd: |
+                  set -o pipefail
+                  crontab -l | grep "{{ backup_script_dir }}/test_cron_job_suffix 1>/dev/null"
+                executable: /bin/bash
+              failed_when: cron_setting_result.rc > 1
+              changed_when: false
+              register: cron_setting_result
+            - name: Assert cron setting:test_cron_job_suffix
+              ansible.builtin.assert:
+                that: cron_setting_result.rc == 0
+    ## バックアップデータの共有
+    ## (同一のグループに所属するアカウントにはデータおよびリポジトリに対する読み取り権限有り)
     - name: Test shared data and repo
       become: true
       become_user: shared_data_and_repo_main

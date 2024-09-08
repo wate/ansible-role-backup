@@ -102,12 +102,20 @@ backup_settings:
         region: auto
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
-  ## 定期実行の指定：なし
+  ## cronでの定期実行：なし
   test_no_schdule:
     user: no_schdule
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_password: test_no_schdule_p@55w0rd
+  ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
+  test_cron_job_suffix:
+    user: cron_job_suffix
+    cron:
+      hour: 1
+      minute: 23
+      job_suffix: "1>/dev/null"
+    command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
   ## バックアップデータの共有
   ## (同一のグループに所属するアカウントにはデータおよびリポジトリに対する読み取り権限有り)
   test_shared_data_and_repo:
