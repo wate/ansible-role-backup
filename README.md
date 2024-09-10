@@ -69,6 +69,10 @@ Role Variables
 
 `restic forget`実行時の共通オプション
 
+### `backup_data_dir_permission`
+
+バックアップデータディレクトリのアクセス権
+
 Example Playbook
 --------------
 
