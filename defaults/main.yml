@@ -141,6 +141,6 @@ backup_restic_forget_common_options:
   - --prune
 
 ## ----------------
-## バックアップを共有する場合の各ディレクトリ(データ・リポジトリ)のアクセス権の設定
+## バックアップデータディレクトリのアクセス権
 ## ----------------
-backup_dir_shared_mode: "0750"
+backup_data_dir_permission: "0750"

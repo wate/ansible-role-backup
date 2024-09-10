@@ -32,11 +32,16 @@ restic_allow_forget_keep_types:
 
 
 ## ----------------
-## バックアップを共有する場合のバックアップスクリプトのアクセス権の設定
+## バックアップスクリプトのアクセス権
 ## ----------------
-backup_script_shared_mode: "0700"
+backup_script_permission: "0700"
 
 ## ----------------
-## バックアップを共有する場合のパスワードファイルのアクセス権の設定
+## パスワードファイルのアクセス権
 ## ----------------
-backup_password_file_shared_mode: "0640"
+backup_password_file_permission: "0640"
+
+## ----------------
+## ローカルのリポジトリディレクトリのアクセス権
+## ----------------
+backup_repo_dir_permission: "0750"

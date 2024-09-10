@@ -69,9 +69,9 @@ Role Variables
 
 `restic forget`実行時の共通オプション
 
-### `backup_dir_shared_mode`
+### `backup_data_dir_permission`
 
-バックアップを共有する場合の各ディレクトリ(データ・リポジトリ)のアクセス権の設定
+バックアップデータディレクトリのアクセス権
 
 Example Playbook
 --------------
