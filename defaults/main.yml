@@ -139,3 +139,8 @@ backup_restic_backup_common_options:
 ## ----------------
 backup_restic_forget_common_options:
   - --prune
+
+## ----------------
+## バックアップを共有する場合の各ディレクトリ(データ・リポジトリ)のアクセス権の設定
+## ----------------
+backup_dir_shared_mode: "0750"

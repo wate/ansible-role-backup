@@ -29,3 +29,14 @@ restic_allow_forget_keep_types:
   - within-weekly
   - within-monthly
   - within-yearly
+
+
+## ----------------
+## バックアップを共有する場合のバックアップスクリプトのアクセス権の設定
+## ----------------
+backup_script_shared_mode: "0700"
+
+## ----------------
+## バックアップを共有する場合のパスワードファイルのアクセス権の設定
+## ----------------
+backup_password_file_shared_mode: "0640"

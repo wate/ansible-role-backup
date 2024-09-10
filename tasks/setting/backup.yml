@@ -16,7 +16,7 @@
     state: directory
     owner: "{{ backup_setting.user }}"
     group: "{{ backup_setting.group | default(backup_setting.user) }}"
-    mode: "0750"
+    mode: "{{ backup_dir_shared_mode }}"
 - name: restic setting:{{ backup_setting_name }}
   when: backup_setting.restic is defined
   block:
@@ -43,7 +43,7 @@
         state: directory
         owner: "{{ backup_setting.user }}"
         group: "{{ backup_setting.group | default(backup_setting.user) }}"
-        mode: "0750"
+        mode: "{{ backup_dir_shared_mode }}"
       when: restic_repo_type == 'local'
     - name: Create/update repository password file
       ansible.builtin.template:
@@ -51,7 +51,7 @@
         dest: "{{ backup_repo_password_dir }}/{{ backup_setting_name }}"
         owner: "{{ backup_setting.user }}"
         group: "{{ backup_setting.group | default(backup_setting.user) }}"
-        mode: "0640"
+        mode: "{{ backup_password_file_shared_mode }}"
         backup: true
       register: password_file_result
       vars:
@@ -111,7 +111,7 @@
     dest: "{{ backup_script_dir }}/{{ backup_setting_name }}"
     owner: "{{ backup_setting.user }}"
     group: "{{ backup_setting.group | default(backup_setting.user) }}"
-    mode: "0700"
+    mode: "{{ backup_script_shared_mode }}"
 - name: Set cron job
   when: backup_setting.cron is defined
   block:
