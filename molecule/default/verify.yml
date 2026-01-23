@@ -21,6 +21,8 @@
           - ansible_facts.packages['cron'] is defined
           - ansible_facts.packages['rclone'] is defined
           - ansible_facts.packages['restic'] is defined
+        fail_msg: "Required backup packages are not installed"
+        success_msg: "All required backup packages are installed"
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：無し
     - name: Test command only
       become: true
@@ -40,6 +42,8 @@
                   - backup_script_result.stat.pw_name == 'command_only'
                   - backup_script_result.stat.gr_name == 'command_only'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_command_only is not properly configured"
+                success_msg: "Backup script for test_command_only is properly configured"
         - name: Test backup data directory:test_command_only
           block:
             - name: Check backup data directory:test_command_only
@@ -54,6 +58,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'command_only'
                   - backup_data_dir_result.stat.gr_name == 'command_only'
+                fail_msg: "Backup data directory for test_command_only is not properly configured"
+                success_msg: "Backup data directory for test_command_only is properly configured"
         - name: Test repository password file:test_command_only
           block:
             - name: Check repository password file:test_command_only
@@ -64,6 +70,8 @@
               ansible.builtin.assert:
                 that:
                   - not repo_password_file_result.stat.exists
+                fail_msg: "Repository password file should not exist for test_command_only"
+                success_msg: "Repository password file correctly does not exist for test_command_only"
         - name: Test repository directory:test_command_only
           block:
             - name: Check repository directory:test_command_only
@@ -74,6 +82,8 @@
               ansible.builtin.assert:
                 that:
                   - not backup_repo_dir_result.stat.exists
+                fail_msg: "Repository directory should not exist for test_command_only"
+                success_msg: "Repository directory correctly does not exist for test_command_only"
         - name: Test cron setting:test_command_only
           block:
             - name: Check cron setting:test_command_only
@@ -88,6 +98,8 @@
             - name: Assert cron setting:test_command_only
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_command_only is not configured"
+                success_msg: "Cron setting for test_command_only is properly configured"
         - name: Test backup script detail:test_command_only
           block:
             - name: Check backup command section:test_command_only
@@ -99,6 +111,8 @@
             - name: Assert backup command:test_command_only
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation for test_command_only failed"
+                success_msg: "Backup command for test_command_only is properly configured"
             - name: Execute backup script:test_command_only
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_command_only"
@@ -107,6 +121,8 @@
             - name: Assert execute backup script result:test_command_only
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for test_command_only failed"
+                success_msg: "Backup script for test_command_only executed successfully"
             - name: Check backup script generated file:test_command_only
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_command_only/test.txt"
@@ -117,6 +133,8 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'command_only'
+                fail_msg: "Backup script generated file for test_command_only is not properly created"
+                success_msg: "Backup script generated file for test_command_only is properly created"
     ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
     - name: Test restic only
       become: true
@@ -136,6 +154,8 @@
                   - backup_script_result.stat.pw_name == 'restic_only'
                   - backup_script_result.stat.gr_name == 'restic_only'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_restic_only is not properly configured"
+                success_msg: "Backup script for test_restic_only is properly configured"
         - name: Test backup data directory:test_restic_only
           block:
             - name: Check backup data directory:test_restic_only
@@ -150,6 +170,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_only'
                   - backup_data_dir_result.stat.gr_name == 'restic_only'
+                fail_msg: "Backup data directory for test_restic_only is not properly configured"
+                success_msg: "Backup data directory for test_restic_only is properly configured"
         - name: Test repository password file:test_restic_only
           block:
             - name: Check repository password file:test_restic_only
@@ -165,6 +187,8 @@
                   - repo_password_file_result.stat.pw_name == 'restic_only'
                   - repo_password_file_result.stat.gr_name == 'restic_only'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_restic_only is not properly configured"
+                success_msg: "Repository password file for test_restic_only is properly configured"
         - name: Test repository directory:test_restic_only
           block:
             - name: Check repository directory:test_restic_only
@@ -180,6 +204,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'restic_only'
                   - backup_repo_dir_result.stat.gr_name == 'restic_only'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_restic_only is not properly configured"
+                success_msg: "Repository directory for test_restic_only is properly configured"
         - name: Test cron setting:test_restic_only
           block:
             - name: Check cron setting:test_restic_only
@@ -194,6 +220,8 @@
             - name: Assert cron setting:test_restic_only
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_restic_only is not configured"
+                success_msg: "Cron setting for test_restic_only is properly configured"
         - name: Test backup script detail:test_restic_only
           block:
             - name: Check backup command section:test_restic_only
@@ -205,6 +233,8 @@
             - name: Assert backup command section:test_restic_only
               ansible.builtin.assert:
                 that: backup_command_result.rc == 1
+                fail_msg: "Backup command should not exist in test_restic_only script"
+                success_msg: "Backup command section correctly not found in test_restic_only script"
             - name: Execute backup script:test_restic_only
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_restic_only"
@@ -213,6 +243,8 @@
             - name: Assert execute backup script result:test_restic_only
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for test_restic_only failed"
+                success_msg: "Backup script for test_restic_only executed successfully"
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
     - name: Test command and restic
       become: true
@@ -232,13 +264,15 @@
                   - backup_script_result.stat.pw_name == 'command_and_restic'
                   - backup_script_result.stat.gr_name == 'command_and_restic'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_command_and_restic is not properly configured"
+                success_msg: "Backup script for test_command_and_restic is properly configured"
         - name: Test backup data directory:test_command_and_restic
           block:
             - name: Check backup data directory:test_command_and_restic
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_command_and_restic"
               register: backup_data_dir_result
-            - name: Assert backup data directory:test_restic_only
+            - name: Assert backup data directory:test_command_and_restic
               ansible.builtin.assert:
                 that:
                   - backup_data_dir_result.stat.exists
@@ -246,6 +280,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'command_and_restic'
                   - backup_data_dir_result.stat.gr_name == 'command_and_restic'
+                fail_msg: "Backup data directory for test_command_and_restic is not properly configured"
+                success_msg: "Backup data directory for test_command_and_restic is properly configured"
         - name: Test repository password file:test_command_and_restic
           block:
             - name: Check repository password file:test_command_and_restic
@@ -261,6 +297,8 @@
                   - repo_password_file_result.stat.pw_name == 'command_and_restic'
                   - repo_password_file_result.stat.gr_name == 'command_and_restic'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_command_and_restic is not properly configured"
+                success_msg: "Repository password file for test_command_and_restic is properly configured"
         - name: Test repository directory:test_command_and_restic
           block:
             - name: Check repository directory:test_command_and_restic
@@ -276,6 +314,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'command_and_restic'
                   - backup_repo_dir_result.stat.gr_name == 'command_and_restic'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_command_and_restic is not properly configured"
+                success_msg: "Repository directory for test_command_and_restic is properly configured"
         - name: Test cron setting:test_command_and_restic
           block:
             - name: Check cron setting:test_command_and_restic
@@ -290,6 +330,8 @@
             - name: Assert cron setting:test_command_and_restic
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_command_and_restic is not configured"
+                success_msg: "Cron setting for test_command_and_restic is properly configured"
         - name: Test backup script detail:test_command_and_restic
           block:
             - name: Check backup command section:test_command_and_restic
@@ -301,6 +343,8 @@
             - name: Assert backup command:test_command_and_restic
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation for test_command_and_restic failed"
+                success_msg: "Backup command for test_command_and_restic is properly configured"
             - name: Execute backup script:test_command_and_restic
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_command_and_restic"
@@ -309,6 +353,8 @@
             - name: Assert execute backup script result:test_command_and_restic
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for test_command_and_restic failed"
+                success_msg: "Backup script for test_command_and_restic executed successfully"
             - name: Check backup script generated file:test_command_and_restic
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_command_and_restic/test.txt"
@@ -319,6 +365,8 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'command_and_restic'
+                fail_msg: "Backup script generated file for test_command_and_restic is not properly created"
+                success_msg: "Backup script generated file for test_command_and_restic is properly created"
     ## バックアップ処理の指定：無し、バックアップデータの世代管理：有り
     ## 外部ストレージ(rclone経由)を利用した世代管理の指定
     - name: Test restic only with rclone
@@ -339,13 +387,15 @@
                   - backup_script_result.stat.pw_name == 'restic_only_with_rclone'
                   - backup_script_result.stat.gr_name == 'restic_only_with_rclone'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_restic_only_with_rclone is not properly configured"
+                success_msg: "Backup script for test_restic_only_with_rclone is properly configured"
         - name: Test backup data directory:test_restic_only_with_rclone
           block:
             - name: Check backup data directory:test_restic_only_with_rclone
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_restic_only_with_rclone"
               register: backup_data_dir_result
-            - name: Assert backup data directory:test_restic_only
+            - name: Assert backup data directory:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that:
                   - backup_data_dir_result.stat.exists
@@ -353,6 +403,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_only_with_rclone'
                   - backup_data_dir_result.stat.gr_name == 'restic_only_with_rclone'
+                fail_msg: "Backup data directory for test_restic_only_with_rclone is not properly configured"
+                success_msg: "Backup data directory for test_restic_only_with_rclone is properly configured"
         - name: Test repository password file:test_restic_only_with_rclone
           block:
             - name: Check repository password file:test_restic_only_with_rclone
@@ -368,6 +420,8 @@
                   - repo_password_file_result.stat.pw_name == 'restic_only_with_rclone'
                   - repo_password_file_result.stat.gr_name == 'restic_only_with_rclone'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_restic_only_with_rclone is not properly configured"
+                success_msg: "Repository password file for test_restic_only_with_rclone is properly configured"
         - name: Test repository directory:test_restic_only_with_rclone
           block:
             - name: Check repository directory:test_restic_only_with_rclone
@@ -378,6 +432,8 @@
               ansible.builtin.assert:
                 that:
                   - not backup_repo_dir_result.stat.exists
+                fail_msg: "Repository directory should not exist for test_restic_only_with_rclone"
+                success_msg: "Repository directory correctly does not exist for test_restic_only_with_rclone"
         - name: Test cron setting:test_restic_only_with_rclone
           block:
             - name: Check cron setting:test_restic_only_with_rclone
@@ -392,6 +448,8 @@
             - name: Assert cron setting:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_restic_only_with_rclone is not configured"
+                success_msg: "Cron setting for test_restic_only_with_rclone is properly configured"
         - name: Test rclone config:test_restic_only_with_rclone
           block:
             - name: Check ~/.config/rclone/rclone.conf:test_restic_only_with_rclone
@@ -405,6 +463,8 @@
                   - rclone_conf_result.stat.isreg
                   - rclone_conf_result.stat.mode == '0600'
                   - rclone_conf_result.stat.pw_name == 'restic_only_with_rclone'
+                fail_msg: "rclone configuration file is not properly configured"
+                success_msg: "rclone configuration file is properly configured"
             - name: Check rclone config section:test_restic_only_with_rclone
               ansible.builtin.command:
                 cmd: grep "[cloudflare_r2]" ~/.config/rclone/rclone.conf
@@ -414,6 +474,8 @@
             - name: Assert rclone config section:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: rclone_config_section_result.rc == 0
+                fail_msg: "rclone config section [cloudflare_r2] is not configured"
+                success_msg: "rclone config section [cloudflare_r2] is properly configured"
             - name: Check rclone config access_key_id:test_restic_only_with_rclone
               ansible.builtin.command:
                 cmd: grep "access_key_id = {{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}" ~/.config/rclone/rclone.conf
@@ -423,6 +485,8 @@
             - name: Assert rclone config access_key_id:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: rclone_config_access_key_id_result.rc == 0
+                fail_msg: "rclone access_key_id is not properly configured"
+                success_msg: "rclone access_key_id is properly configured"
             - name: Check rclone config secret_access_key:test_restic_only_with_rclone
               ansible.builtin.command:
                 cmd: grep "secret_access_key = {{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}" ~/.config/rclone/rclone.conf
@@ -432,6 +496,8 @@
             - name: Assert rclone config secret_access_key:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: rclone_config_secret_access_key_result.rc == 0
+                fail_msg: "rclone secret_access_key is not properly configured"
+                success_msg: "rclone secret_access_key is properly configured"
             - name: Check rclone config endpoint:test_restic_only_with_rclone
               ansible.builtin.command:
                 cmd: grep "endpoint = {{ lookup('env', 'rclone_config_endpoint') }}" ~/.config/rclone/rclone.conf
@@ -441,6 +507,8 @@
             - name: Assert rclone config endpoint:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: rclone_config_endpoint.rc == 0
+                fail_msg: "rclone endpoint is not properly configured"
+                success_msg: "rclone endpoint is properly configured"
         - name: Test backup script detail:test_restic_only_with_rclone
           block:
             - name: Check backup command section:test_restic_only_with_rclone
@@ -452,6 +520,8 @@
             - name: Assert backup command section:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: backup_command_result.rc == 1
+                fail_msg: "Backup command should not exist in test_restic_only_with_rclone script"
+                success_msg: "Backup command section correctly not found in test_restic_only_with_rclone script"
             - name: Execute backup script:test_restic_only_with_rclone
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_restic_only_with_rclone"
@@ -460,6 +530,8 @@
             - name: Assert execute backup script result:test_restic_only_with_rclone
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for test_restic_only_with_rclone failed"
+                success_msg: "Backup script for test_restic_only_with_rclone executed successfully"
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
     ## keepパラメーターの指定による世代数の指定有り
     - name: Test restic forget keep param
@@ -480,6 +552,8 @@
                   - backup_script_result.stat.pw_name == 'restic_forget_keep_param'
                   - backup_script_result.stat.gr_name == 'restic_forget_keep_param'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_restic_forget_keep_param is not properly configured"
+                success_msg: "Backup script for test_restic_forget_keep_param is properly configured"
         - name: Test backup data directory:test_restic_forget_keep_param
           block:
             - name: Check backup data directory:test_restic_forget_keep_param
@@ -494,6 +568,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_forget_keep_param'
                   - backup_data_dir_result.stat.gr_name == 'restic_forget_keep_param'
+                fail_msg: "Backup data directory for test_restic_forget_keep_param is not properly configured"
+                success_msg: "Backup data directory for test_restic_forget_keep_param is properly configured"
         - name: Test repository password file:test_restic_forget_keep_param
           block:
             - name: Check repository password file:test_restic_forget_keep_param
@@ -509,6 +585,8 @@
                   - repo_password_file_result.stat.pw_name == 'restic_forget_keep_param'
                   - repo_password_file_result.stat.gr_name == 'restic_forget_keep_param'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_restic_forget_keep_param is not properly configured"
+                success_msg: "Repository password file for test_restic_forget_keep_param is properly configured"
         - name: Test repository directory:test_restic_forget_keep_param
           block:
             - name: Check repository directory:test_restic_forget_keep_param
@@ -524,6 +602,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'restic_forget_keep_param'
                   - backup_repo_dir_result.stat.gr_name == 'restic_forget_keep_param'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_restic_forget_keep_param is not properly configured"
+                success_msg: "Repository directory for test_restic_forget_keep_param is properly configured"
         - name: Test cron setting:test_restic_forget_keep_param
           block:
             - name: Check cron setting:test_restic_forget_keep_param
@@ -538,6 +618,8 @@
             - name: Assert cron setting:test_restic_forget_keep_param
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_restic_forget_keep_param is not configured"
+                success_msg: "Cron setting for test_restic_forget_keep_param is properly configured"
         - name: Test backup script detail:test_restic_forget_keep_param
           block:
             - name: Check backup command section:test_restic_forget_keep_param
@@ -549,6 +631,8 @@
             - name: Assert backup command:test_restic_forget_keep_param
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation failed"
+                success_msg: "Backup command is properly configured"
             - name: Check restic forget command:test_restic_forget_keep_param
               ansible.builtin.command:
                 cmd: grep "restic forget --keep-hourly 6 --prune" "{{ backup_script_dir }}/test_restic_forget_keep_param"
@@ -558,6 +642,8 @@
             - name: Assert restic forget command:test_restic_forget_keep_param
               ansible.builtin.assert:
                 that: restic_forget_command_result.rc == 0
+                fail_msg: "Restic forget command not properly configured"
+                success_msg: "Restic forget command is properly configured"
             - name: Execute backup script:test_restic_forget_keep_param
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_restic_forget_keep_param"
@@ -566,6 +652,8 @@
             - name: Assert execute backup script result:test_restic_forget_keep_param
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution failed"
+                success_msg: "Backup script executed successfully"
             - name: Check backup script generated file:test_restic_forget_keep_param
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_restic_forget_keep_param/test.txt"
@@ -576,6 +664,8 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_forget_keep_param'
+                fail_msg: "Generated file not properly created"
+                success_msg: "Generated file properly created"
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
     ## バックアップ終了後に`restic forget`を実行しない
     - name: Test restic no forget
@@ -596,6 +686,8 @@
                   - backup_script_result.stat.pw_name == 'restic_no_forget'
                   - backup_script_result.stat.gr_name == 'restic_no_forget'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_restic_no_forget is not properly configured"
+                success_msg: "Backup script for test_restic_no_forget is properly configured"
         - name: Test backup data directory:test_restic_no_forget
           block:
             - name: Check backup data directory:test_restic_no_forget
@@ -610,6 +702,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_no_forget'
                   - backup_data_dir_result.stat.gr_name == 'restic_no_forget'
+                fail_msg: "Backup data directory for test_restic_no_forget is not properly configured"
+                success_msg: "Backup data directory for test_restic_no_forget is properly configured"
         - name: Test repository password file:test_restic_no_forget
           block:
             - name: Check repository password file:test_restic_no_forget
@@ -625,6 +719,8 @@
                   - repo_password_file_result.stat.pw_name == 'restic_no_forget'
                   - repo_password_file_result.stat.gr_name == 'restic_no_forget'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_restic_no_forget is not properly configured"
+                success_msg: "Repository password file for test_restic_no_forget is properly configured"
         - name: Test repository directory:test_restic_no_forget
           block:
             - name: Check repository directory:test_restic_no_forget
@@ -640,6 +736,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'restic_no_forget'
                   - backup_repo_dir_result.stat.gr_name == 'restic_no_forget'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_restic_no_forget is not properly configured"
+                success_msg: "Repository directory for test_restic_no_forget is properly configured"
         - name: Test cron setting:test_restic_no_forget
           block:
             - name: Check cron setting:test_restic_no_forget
@@ -654,6 +752,8 @@
             - name: Assert cron setting:test_restic_no_forget
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_restic_no_forget is not configured"
+                success_msg: "Cron setting for test_restic_no_forget is properly configured"
         - name: Test backup script detail:test_restic_no_forget
           block:
             - name: Check backup command section:test_restic_no_forget
@@ -665,6 +765,8 @@
             - name: Assert backup command:test_restic_no_forget
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation failed"
+                success_msg: "Backup command is properly configured"
             - name: Check restic forget command:test_restic_no_forget
               ansible.builtin.command:
                 cmd: grep "restic forget" "{{ backup_script_dir }}/test_restic_no_forget"
@@ -674,6 +776,8 @@
             - name: Assert restic forget command:test_restic_no_forget
               ansible.builtin.assert:
                 that: restic_forget_command_result.rc == 1
+                fail_msg: "Restic forget command should not exist"
+                success_msg: "Restic forget command correctly not found"
             - name: Execute backup script:test_restic_no_forget
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_restic_no_forget"
@@ -682,6 +786,8 @@
             - name: Assert execute backup script result:test_restic_no_forget
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution failed"
+                success_msg: "Backup script executed successfully"
             - name: Check backup script generated file:test_restic_no_forget
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_restic_no_forget/test.txt"
@@ -692,6 +798,8 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_no_forget'
+                fail_msg: "Generated file not properly created"
+                success_msg: "Generated file properly created"
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
     ## 過去3日以内の日次スナップショットと、直近24時間以内の時間毎スナップショットを残してスナップショットをクリーンアップする
     - name: Test restic other forget option
@@ -712,6 +820,8 @@
                   - backup_script_result.stat.pw_name == 'restic_other_forget_option'
                   - backup_script_result.stat.gr_name == 'restic_other_forget_option'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_restic_other_forget_option is not properly configured"
+                success_msg: "Backup script for test_restic_other_forget_option is properly configured"
         - name: Test backup data directory:test_restic_other_forget_option
           block:
             - name: Check backup data directory:test_restic_other_forget_option
@@ -726,6 +836,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_other_forget_option'
                   - backup_data_dir_result.stat.gr_name == 'restic_other_forget_option'
+                fail_msg: "Backup data directory for test_restic_other_forget_option is not properly configured"
+                success_msg: "Backup data directory for test_restic_other_forget_option is properly configured"
         - name: Test repository password file:test_restic_other_forget_option
           block:
             - name: Check repository password file:test_restic_other_forget_option
@@ -741,6 +853,8 @@
                   - repo_password_file_result.stat.pw_name == 'restic_other_forget_option'
                   - repo_password_file_result.stat.gr_name == 'restic_other_forget_option'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_restic_other_forget_option is not properly configured"
+                success_msg: "Repository password file for test_restic_other_forget_option is properly configured"
         - name: Test repository directory:test_restic_other_forget_option
           block:
             - name: Check repository directory:test_restic_other_forget_option
@@ -756,6 +870,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'restic_other_forget_option'
                   - backup_repo_dir_result.stat.gr_name == 'restic_other_forget_option'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_restic_other_forget_option is not properly configured"
+                success_msg: "Repository directory for test_restic_other_forget_option is properly configured"
         - name: Test cron setting:test_restic_other_forget_option
           block:
             - name: Check cron setting:test_restic_other_forget_option
@@ -770,6 +886,8 @@
             - name: Assert cron setting:test_restic_other_forget_option
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_restic_other_forget_option is not configured"
+                success_msg: "Cron setting for test_restic_other_forget_option is properly configured"
         - name: Test backup script detail:test_restic_other_forget_option
           block:
             - name: Check backup command section:test_restic_other_forget_option
@@ -781,6 +899,8 @@
             - name: Assert backup command:test_restic_other_forget_option
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation for test_restic_other_forget_option failed"
+                success_msg: "Backup command for test_restic_other_forget_option is properly configured"
             - name: Check restic forget command:test_restic_other_forget_option
               ansible.builtin.command:
                 cmd: grep "restic forget --keep-hourly 24 --keep-within-daily 7d --prune" "{{ backup_script_dir }}/test_restic_other_forget_option"
@@ -790,6 +910,8 @@
             - name: Assert restic forget command:test_restic_other_forget_option
               ansible.builtin.assert:
                 that: restic_forget_command_result.rc == 0
+                fail_msg: "Restic forget command for test_restic_other_forget_option is not properly configured"
+                success_msg: "Restic forget command for test_restic_other_forget_option is properly configured"
             - name: Execute backup script:test_restic_other_forget_option
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_restic_other_forget_option"
@@ -798,6 +920,8 @@
             - name: Assert execute backup script result:test_restic_other_forget_option
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for test_restic_other_forget_option failed"
+                success_msg: "Backup script for test_restic_other_forget_option executed successfully"
             - name: Check backup script generated file:test_restic_other_forget_option
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_restic_other_forget_option/test.txt"
@@ -808,6 +932,8 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_other_forget_option'
+                fail_msg: "Backup script generated file for test_restic_other_forget_option is not properly created"
+                success_msg: "Backup script generated file for test_restic_other_forget_option is properly created"
     ## バックアップ処理の指定：有り、バックアップデータの世代管理：有り
     ## 外部ストレージ(rclone経由)を利用した世代管理の指定
     - name: Test restic and rclone
@@ -828,6 +954,8 @@
                   - backup_script_result.stat.pw_name == 'restic_and_rclone'
                   - backup_script_result.stat.gr_name == 'restic_and_rclone'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_restic_and_rclone is not properly configured"
+                success_msg: "Backup script for test_restic_and_rclone is properly configured"
         - name: Test backup data directory:test_restic_and_rclone
           block:
             - name: Check backup data directory:test_restic_and_rclone
@@ -842,6 +970,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'restic_and_rclone'
                   - backup_data_dir_result.stat.gr_name == 'restic_and_rclone'
+                fail_msg: "Backup data directory for test_restic_and_rclone is not properly configured"
+                success_msg: "Backup data directory for test_restic_and_rclone is properly configured"
         - name: Test repository password file:test_restic_and_rclone
           block:
             - name: Check repository password file:test_restic_and_rclone
@@ -857,6 +987,8 @@
                   - repo_password_file_result.stat.pw_name == 'restic_and_rclone'
                   - repo_password_file_result.stat.gr_name == 'restic_and_rclone'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_restic_and_rclone is not properly configured"
+                success_msg: "Repository password file for test_restic_and_rclone is properly configured"
         - name: Test repository directory:test_restic_and_rclone
           block:
             - name: Check repository directory:test_restic_and_rclone
@@ -867,6 +999,8 @@
               ansible.builtin.assert:
                 that:
                   - not backup_repo_dir_result.stat.exists
+                fail_msg: "Repository directory should not exist for test_restic_and_rclone"
+                success_msg: "Repository directory correctly does not exist for test_restic_and_rclone"
         - name: Test cron setting:test_restic_and_rclone
           block:
             - name: Check cron setting:test_restic_and_rclone
@@ -881,6 +1015,8 @@
             - name: Assert cron setting:test_restic_and_rclone
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_restic_and_rclone is not configured"
+                success_msg: "Cron setting for test_restic_and_rclone is properly configured"
         - name: Test rclone config:test_restic_and_rclone
           block:
             - name: Check ~/.config/rclone/rclone.conf:test_restic_and_rclone
@@ -894,6 +1030,8 @@
                   - rclone_conf_result.stat.isreg
                   - rclone_conf_result.stat.mode == '0600'
                   - rclone_conf_result.stat.pw_name == 'restic_and_rclone'
+                fail_msg: "rclone configuration file is not properly configured for test_restic_and_rclone"
+                success_msg: "rclone configuration file is properly configured for test_restic_and_rclone"
             - name: Check rclone config section:test_restic_and_rclone
               ansible.builtin.command:
                 cmd: grep "[cloudflare_r2]" ~/.config/rclone/rclone.conf
@@ -903,6 +1041,8 @@
             - name: Assert rclone config section:test_restic_and_rclone
               ansible.builtin.assert:
                 that: rclone_config_section_result.rc == 0
+                fail_msg: "rclone config section [cloudflare_r2] is not configured for test_restic_and_rclone"
+                success_msg: "rclone config section [cloudflare_r2] is configured for test_restic_and_rclone"
             - name: Check rclone config access_key_id:test_restic_and_rclone
               ansible.builtin.command:
                 cmd: grep "access_key_id = {{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}" ~/.config/rclone/rclone.conf
@@ -912,6 +1052,8 @@
             - name: Assert rclone config access_key_id:test_restic_and_rclone
               ansible.builtin.assert:
                 that: rclone_config_access_key_id_result.rc == 0
+                fail_msg: "rclone access_key_id is not properly configured for test_restic_and_rclone"
+                success_msg: "rclone access_key_id is properly configured for test_restic_and_rclone"
             - name: Check rclone config secret_access_key:test_restic_and_rclone
               ansible.builtin.command:
                 cmd: grep "secret_access_key = {{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}" ~/.config/rclone/rclone.conf
@@ -921,6 +1063,8 @@
             - name: Assert rclone config secret_access_key:test_restic_and_rclone
               ansible.builtin.assert:
                 that: rclone_config_secret_access_key_result.rc == 0
+                fail_msg: "rclone secret_access_key is not properly configured for test_restic_and_rclone"
+                success_msg: "rclone secret_access_key is properly configured for test_restic_and_rclone"
             - name: Check rclone config endpoint:test_restic_and_rclone
               ansible.builtin.command:
                 cmd: grep "endpoint = {{ lookup('env', 'rclone_config_endpoint') }}" ~/.config/rclone/rclone.conf
@@ -930,6 +1074,8 @@
             - name: Assert rclone config endpoint:test_restic_and_rclone
               ansible.builtin.assert:
                 that: rclone_config_endpoint.rc == 0
+                fail_msg: "rclone endpoint is not properly configured for test_restic_and_rclone"
+                success_msg: "rclone endpoint is properly configured for test_restic_and_rclone"
         - name: Test backup script detail:test_restic_and_rclone
           block:
             - name: Check backup command section:test_restic_and_rclone
@@ -941,6 +1087,8 @@
             - name: Assert backup command:test_restic_and_rclone
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation for test_restic_and_rclone failed"
+                success_msg: "Backup command for test_restic_and_rclone is properly configured"
             - name: Execute backup script:test_restic_and_rclone
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/test_restic_and_rclone"
@@ -949,6 +1097,8 @@
             - name: Assert execute backup script result:test_restic_and_rclone
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for test_restic_and_rclone failed"
+                success_msg: "Backup script for test_restic_and_rclone executed successfully"
             - name: Check backup script generated file:test_restic_and_rclone
               ansible.builtin.stat:
                 path: "{{ backup_data_dir }}/test_restic_and_rclone/test.txt"
@@ -959,6 +1109,8 @@
                   - backup_script_generated_file_result.stat.exists
                   - backup_script_generated_file_result.stat.isreg
                   - backup_script_generated_file_result.stat.pw_name == 'restic_and_rclone'
+                fail_msg: "Backup script generated file for test_restic_and_rclone is not properly created"
+                success_msg: "Backup script generated file for test_restic_and_rclone is properly created"
     ## cronでの定期実行：なし
     - name: Test no schdule
       become: true
@@ -978,6 +1130,8 @@
                   - backup_script_result.stat.pw_name == 'no_schdule'
                   - backup_script_result.stat.gr_name == 'no_schdule'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_no_schdule is not properly configured"
+                success_msg: "Backup script for test_no_schdule is properly configured"
         - name: Test backup data directory:test_no_schdule
           block:
             - name: Check backup data directory:test_no_schdule
@@ -992,6 +1146,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'no_schdule'
                   - backup_data_dir_result.stat.gr_name == 'no_schdule'
+                fail_msg: "Backup data directory for test_no_schdule is not properly configured"
+                success_msg: "Backup data directory for test_no_schdule is properly configured"
         - name: Test repository password file:test_no_schdule
           block:
             - name: Check repository password file:test_no_schdule
@@ -1007,6 +1163,8 @@
                   - repo_password_file_result.stat.pw_name == 'no_schdule'
                   - repo_password_file_result.stat.gr_name == 'no_schdule'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_no_schdule is not properly configured"
+                success_msg: "Repository password file for test_no_schdule is properly configured"
         - name: Test repository directory:test_no_schdule
           block:
             - name: Check repository directory:test_no_schdule
@@ -1022,6 +1180,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'no_schdule'
                   - backup_repo_dir_result.stat.gr_name == 'no_schdule'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_no_schdule is not properly configured"
+                success_msg: "Repository directory for test_no_schdule is properly configured"
         - name: Test cron setting:test_no_schdule
           block:
             - name: Check cron setting:test_no_schdule
@@ -1036,6 +1196,8 @@
             - name: Assert cron setting:test_no_schdule
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 1
+                fail_msg: "Cron setting for test_no_schdule should not exist"
+                success_msg: "Cron setting for test_no_schdule correctly not configured"
     ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
     - name: Test cron job suffix
       become: true
@@ -1055,6 +1217,8 @@
                   - backup_script_result.stat.pw_name == 'cron_job_suffix'
                   - backup_script_result.stat.gr_name == 'cron_job_suffix'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for test_cron_job_suffix is not properly configured"
+                success_msg: "Backup script for test_cron_job_suffix is properly configured"
         - name: Test backup data directory:test_cron_job_suffix
           block:
             - name: Check backup data directory:test_cron_job_suffix
@@ -1069,6 +1233,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'cron_job_suffix'
                   - backup_data_dir_result.stat.gr_name == 'cron_job_suffix'
+                fail_msg: "Backup data directory for test_cron_job_suffix is not properly configured"
+                success_msg: "Backup data directory for test_cron_job_suffix is properly configured"
         - name: Test repository password file:test_cron_job_suffix
           block:
             - name: Check repository password file:test_cron_job_suffix
@@ -1079,6 +1245,8 @@
               ansible.builtin.assert:
                 that:
                   - not repo_password_file_result.stat.exists
+                fail_msg: "Repository password file should not exist for test_cron_job_suffix"
+                success_msg: "Repository password file correctly does not exist for test_cron_job_suffix"
         - name: Test repository directory:test_cron_job_suffix
           block:
             - name: Check repository directory:test_cron_job_suffix
@@ -1089,6 +1257,8 @@
               ansible.builtin.assert:
                 that:
                   - not backup_repo_dir_result.stat.exists
+                fail_msg: "Repository directory should not exist for test_cron_job_suffix"
+                success_msg: "Repository directory correctly does not exist for test_cron_job_suffix"
         - name: Test cron setting:test_cron_job_suffix
           block:
             - name: Check cron setting:test_cron_job_suffix
@@ -1103,6 +1273,8 @@
             - name: Assert cron setting:test_cron_job_suffix
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for test_cron_job_suffix is not configured"
+                success_msg: "Cron setting for test_cron_job_suffix is properly configured"
     ## バックアップデータの共有
     ## (同一のグループに所属するアカウントにはデータおよびリポジトリに対する読み取り権限有り)
     - name: Test shared data and repo
@@ -1124,6 +1296,8 @@
                   - backup_script_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_script_result.stat.executable
                   - backup_script_result.stat.mode == '0700'
+                fail_msg: "Backup script for test_shared_data_and_repo is not properly configured"
+                success_msg: "Backup script for test_shared_data_and_repo is properly configured"
         - name: Test backup data directory:test_shared_data_and_repo
           block:
             - name: Check backup data directory:test_shared_data_and_repo
@@ -1139,6 +1313,8 @@
                   - backup_data_dir_result.stat.pw_name == 'shared_data_and_repo_main'
                   - backup_data_dir_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_data_dir_result.stat.mode == '0750'
+                fail_msg: "Backup data directory for test_shared_data_and_repo is not properly configured"
+                success_msg: "Backup data directory for test_shared_data_and_repo is properly configured"
 
         - name: Test repository password file:test_shared_data_and_repo
           block:
@@ -1155,6 +1331,8 @@
                   - repo_password_file_result.stat.pw_name == 'shared_data_and_repo_main'
                   - repo_password_file_result.stat.gr_name == 'shared_data_and_repo'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for test_shared_data_and_repo is not properly configured"
+                success_msg: "Repository password file for test_shared_data_and_repo is properly configured"
         - name: Test repository directory:test_shared_data_and_repo
           block:
             - name: Check repository directory:test_shared_data_and_repo
@@ -1170,6 +1348,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'shared_data_and_repo_main'
                   - backup_repo_dir_result.stat.gr_name == 'shared_data_and_repo'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for test_shared_data_and_repo is not properly configured"
+                success_msg: "Repository directory for test_shared_data_and_repo is properly configured"
     ## 設定例：WordPress
     - name: Test wordpress
       become: true
@@ -1189,6 +1369,8 @@
                   - backup_script_result.stat.pw_name == 'wordpress'
                   - backup_script_result.stat.gr_name == 'wordpress'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for wordpress is not properly configured"
+                success_msg: "Backup script for wordpress is properly configured"
         - name: Test backup data directory:wordpress
           block:
             - name: Check backup data directory:wordpress
@@ -1203,6 +1385,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'wordpress'
                   - backup_data_dir_result.stat.gr_name == 'wordpress'
+                fail_msg: "Backup data directory for wordpress is not properly configured"
+                success_msg: "Backup data directory for wordpress is properly configured"
         - name: Test repository password file:wordpress
           block:
             - name: Check repository password file:wordpress
@@ -1218,6 +1402,8 @@
                   - repo_password_file_result.stat.pw_name == 'wordpress'
                   - repo_password_file_result.stat.gr_name == 'wordpress'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for wordpress is not properly configured"
+                success_msg: "Repository password file for wordpress is properly configured"
         - name: Test repository directory:wordpress
           block:
             - name: Check repository directory:wordpress
@@ -1233,6 +1419,8 @@
                   - backup_repo_dir_result.stat.pw_name == 'wordpress'
                   - backup_repo_dir_result.stat.gr_name == 'wordpress'
                   - backup_repo_dir_result.stat.mode == '0750'
+                fail_msg: "Repository directory for wordpress is not properly configured"
+                success_msg: "Repository directory for wordpress is properly configured"
         - name: Test cron setting:wordpress
           block:
             - name: Check cron setting:wordpress
@@ -1247,6 +1435,8 @@
             - name: Assert cron setting:wordpress
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for wordpress is not configured"
+                success_msg: "Cron setting for wordpress is properly configured"
         - name: Test backup script detail:wordpress
           block:
             - name: Check backup command section:wordpress
@@ -1258,6 +1448,8 @@
             - name: Assert backup command:wordpress
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation for wordpress failed"
+                success_msg: "Backup command for wordpress is properly configured"
             - name: Execute backup script:wordpress
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/wordpress"
@@ -1266,6 +1458,8 @@
             - name: Assert execute backup script result:wordpress
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for wordpress failed"
+                success_msg: "Backup script for wordpress executed successfully"
     ## 設定例：Redmine
     - name: Test redmine
       become: true
@@ -1285,6 +1479,8 @@
                   - backup_script_result.stat.pw_name == 'redmine'
                   - backup_script_result.stat.gr_name == 'redmine'
                   - backup_script_result.stat.executable
+                fail_msg: "Backup script for redmine is not properly configured"
+                success_msg: "Backup script for redmine is properly configured"
         - name: Test backup data directory:redmine
           block:
             - name: Check backup data directory:redmine
@@ -1299,6 +1495,8 @@
                   - backup_data_dir_result.stat.writeable
                   - backup_data_dir_result.stat.pw_name == 'redmine'
                   - backup_data_dir_result.stat.gr_name == 'redmine'
+                fail_msg: "Backup data directory for redmine is not properly configured"
+                success_msg: "Backup data directory for redmine is properly configured"
         - name: Test repository password file:redmine
           block:
             - name: Check repository password file:redmine
@@ -1314,6 +1512,8 @@
                   - repo_password_file_result.stat.pw_name == 'redmine'
                   - repo_password_file_result.stat.gr_name == 'redmine'
                   - repo_password_file_result.stat.mode == '0640'
+                fail_msg: "Repository password file for redmine is not properly configured"
+                success_msg: "Repository password file for redmine is properly configured"
         - name: Test repository directory:redmine
           block:
             - name: Check repository directory:redmine
@@ -1324,6 +1524,8 @@
               ansible.builtin.assert:
                 that:
                   - not backup_repo_dir_result.stat.exists
+                fail_msg: "Repository directory should not exist for redmine"
+                success_msg: "Repository directory correctly does not exist for redmine"
         - name: Test cron setting:redmine
           block:
             - name: Check cron setting:redmine
@@ -1338,6 +1540,8 @@
             - name: Assert cron setting:redmine
               ansible.builtin.assert:
                 that: cron_setting_result.rc == 0
+                fail_msg: "Cron setting for redmine is not configured"
+                success_msg: "Cron setting for redmine is properly configured"
         - name: Test rclone config:redmine
           block:
             - name: Check ~/.config/rclone/rclone.conf:redmine
@@ -1351,6 +1555,8 @@
                   - rclone_conf_result.stat.isreg
                   - rclone_conf_result.stat.mode == '0600'
                   - rclone_conf_result.stat.pw_name == 'redmine'
+                fail_msg: "rclone configuration file is not properly configured for redmine"
+                success_msg: "rclone configuration file is properly configured for redmine"
             - name: Check rclone config section:redmine
               ansible.builtin.command:
                 cmd: grep "[cloudflare_r2]" ~/.config/rclone/rclone.conf
@@ -1360,6 +1566,8 @@
             - name: Assert rclone config section:redmine
               ansible.builtin.assert:
                 that: rclone_config_section_result.rc == 0
+                fail_msg: "rclone config section [cloudflare_r2] is not configured for redmine"
+                success_msg: "rclone config section [cloudflare_r2] is configured for redmine"
             - name: Check rclone config access_key_id:redmine
               ansible.builtin.command:
                 cmd: grep "access_key_id = {{ lookup('env', 'CLOUDFLARE_R2_ACCESS_KEY_ID') }}" ~/.config/rclone/rclone.conf
@@ -1369,6 +1577,8 @@
             - name: Assert rclone config access_key_id:redmine
               ansible.builtin.assert:
                 that: rclone_config_access_key_id_result.rc == 0
+                fail_msg: "rclone access_key_id is not properly configured for redmine"
+                success_msg: "rclone access_key_id is properly configured for redmine"
             - name: Check rclone config secret_access_key:redmine
               ansible.builtin.command:
                 cmd: grep "secret_access_key = {{ lookup('env', 'CLOUDFLARE_R2_SECRET_ACCESS_KEY') }}" ~/.config/rclone/rclone.conf
@@ -1378,6 +1588,8 @@
             - name: Assert rclone config secret_access_key:redmine
               ansible.builtin.assert:
                 that: rclone_config_secret_access_key_result.rc == 0
+                fail_msg: "rclone secret_access_key is not properly configured for redmine"
+                success_msg: "rclone secret_access_key is properly configured for redmine"
             - name: Check rclone config endpoint:redmine
               ansible.builtin.command:
                 cmd: grep "endpoint = {{ lookup('env', 'rclone_config_endpoint') }}" ~/.config/rclone/rclone.conf
@@ -1387,6 +1599,8 @@
             - name: Assert rclone config endpoint:redmine
               ansible.builtin.assert:
                 that: rclone_config_endpoint.rc == 0
+                fail_msg: "rclone endpoint is not properly configured for redmine"
+                success_msg: "rclone endpoint is properly configured for redmine"
         - name: Test backup script detail:redmine
           block:
             - name: Check backup command section:redmine
@@ -1398,6 +1612,8 @@
             - name: Assert backup command:redmine
               ansible.builtin.assert:
                 that: backup_command_result.rc == 0
+                fail_msg: "Backup command validation for redmine failed"
+                success_msg: "Backup command for redmine is properly configured"
             - name: Execute backup script:redmine
               ansible.builtin.command:
                 cmd: "{{ backup_script_dir }}/redmine"
@@ -1406,3 +1622,5 @@
             - name: Assert execute backup script result:redmine
               ansible.builtin.assert:
                 that: exec_backup_script_result.rc == 0
+                fail_msg: "Backup script execution for redmine failed"
+                success_msg: "Backup script for redmine executed successfully"
