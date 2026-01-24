@@ -8,8 +8,7 @@ OS Platform
 
 ### Debian
 
-- bookworm
-- bullseye
+- trixie
 
 Role Variables
 --------------

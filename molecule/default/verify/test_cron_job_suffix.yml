@@ -1,0 +1,74 @@
+# code: language=ansible
+---
+- name: Test backup script:test_cron_job_suffix
+  block:
+    - name: Check backup script:test_cron_job_suffix
+      ansible.builtin.stat:
+        path: "{{ backup_script_dir }}/test_cron_job_suffix"
+      register: backup_script_result
+    - name: Assert backup script:test_cron_job_suffix
+      ansible.builtin.assert:
+        that:
+          - backup_script_result.stat.exists
+          - backup_script_result.stat.isreg
+          - backup_script_result.stat.pw_name == 'cron_job_suffix'
+          - backup_script_result.stat.gr_name == 'cron_job_suffix'
+          - backup_script_result.stat.executable
+        fail_msg: "Backup script for test_cron_job_suffix is not properly configured"
+        success_msg: "Backup script for test_cron_job_suffix is properly configured"
+- name: Test backup data directory:test_cron_job_suffix
+  block:
+    - name: Check backup data directory:test_cron_job_suffix
+      ansible.builtin.stat:
+        path: "{{ backup_data_dir }}/test_cron_job_suffix"
+      register: backup_data_dir_result
+    - name: Assert backup data directory:test_restic_only
+      ansible.builtin.assert:
+        that:
+          - backup_data_dir_result.stat.exists
+          - backup_data_dir_result.stat.isdir
+          - backup_data_dir_result.stat.writeable
+          - backup_data_dir_result.stat.pw_name == 'cron_job_suffix'
+          - backup_data_dir_result.stat.gr_name == 'cron_job_suffix'
+        fail_msg: "Backup data directory for test_cron_job_suffix is not properly configured"
+        success_msg: "Backup data directory for test_cron_job_suffix is properly configured"
+- name: Test repository password file:test_cron_job_suffix
+  block:
+    - name: Check repository password file:test_cron_job_suffix
+      ansible.builtin.stat:
+        path: "{{ backup_repo_password_dir }}/test_cron_job_suffix"
+      register: repo_password_file_result
+    - name: Assert repository password file:test_cron_job_suffix
+      ansible.builtin.assert:
+        that:
+          - not repo_password_file_result.stat.exists
+        fail_msg: "Repository password file should not exist for test_cron_job_suffix"
+        success_msg: "Repository password file correctly does not exist for test_cron_job_suffix"
+- name: Test repository directory:test_cron_job_suffix
+  block:
+    - name: Check repository directory:test_cron_job_suffix
+      ansible.builtin.stat:
+        path: "{{ backup_repo_dir }}/test_cron_job_suffix"
+      register: backup_repo_dir_result
+    - name: Assert repository directory:test_cron_job_suffix
+      ansible.builtin.assert:
+        that:
+          - not backup_repo_dir_result.stat.exists
+        fail_msg: "Repository directory should not exist for test_cron_job_suffix"
+        success_msg: "Repository directory correctly does not exist for test_cron_job_suffix"
+- name: Test cron setting:test_cron_job_suffix
+  block:
+    - name: Check cron setting:test_cron_job_suffix
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          crontab -l | grep "{{ backup_script_dir }}/test_cron_job_suffix 1>/dev/null"
+        executable: /bin/bash
+      failed_when: cron_setting_result.rc > 1
+      changed_when: false
+      register: cron_setting_result
+    - name: Assert cron setting:test_cron_job_suffix
+      ansible.builtin.assert:
+        that: cron_setting_result.rc == 0
+        fail_msg: "Cron setting for test_cron_job_suffix is not configured"
+        success_msg: "Cron setting for test_cron_job_suffix is properly configured"

@@ -34,7 +34,7 @@ backup_settings:
       minute: 23
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:test/restic_only_with_rclone
+      repo: cloudflare_r2:test/{{ inventory_hostname }}/restic_only_with_rclone
       repo_password: test_restic_only_with_rclone_p@55w0rd
     rclone:
       cloudflare_r2:
@@ -91,7 +91,7 @@ backup_settings:
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:test/test_restic_and_rclone
+      repo: cloudflare_r2:test/{{ inventory_hostname }}/test_restic_and_rclone
       repo_password: test_restic_and_rclone_p@55w0rd
     rclone:
       cloudflare_r2:
@@ -103,11 +103,11 @@ backup_settings:
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
   ## cronでの定期実行：なし
-  test_no_schdule:
-    user: no_schdule
+  test_no_schedule:
+    user: no_schedule
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
-      repo_password: test_no_schdule_p@55w0rd
+      repo_password: test_no_schedule_p@55w0rd
   ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
   test_cron_job_suffix:
     user: cron_job_suffix
@@ -161,7 +161,7 @@ backup_settings:
       # tar vcfz ${BACKUP_DATA_DIR}/files.tar.gz /path/to/redmine/files/*
     restic:
       repo_type: rclone
-      repo: cloudflare_r2:test/redmine
+      repo: cloudflare_r2:test/{{ inventory_hostname }}/redmine
       repo_password: example_redmine_p@55w0rd
       forget_keep_type: weekly
       forget_keep_value: 2
