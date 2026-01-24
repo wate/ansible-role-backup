@@ -93,13 +93,13 @@
           ansible.builtin.import_tasks:
             file: verify/test_restic_and_rclone.yml
     ## cronでの定期実行：なし
-    - name: Test no schdule
+    - name: Test no schedule
       become: true
-      become_user: no_schdule
+      become_user: no_schedule
       block:
-        - name: Import testcase test_no_schdule
+        - name: Import testcase test_no_schedule
           ansible.builtin.import_tasks:
-            file: verify/test_no_schdule.yml
+            file: verify/test_no_schedule.yml
     ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
     - name: Test cron job suffix
       become: true

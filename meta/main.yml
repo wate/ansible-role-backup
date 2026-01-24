@@ -9,5 +9,4 @@ galaxy_info:
     - name: Debian
       versions:
         - trixie
-        - bookworm
 dependencies: []

@@ -103,11 +103,11 @@ backup_settings:
         bucket_acl: private
         endpoint: "{{ lookup('env', 'CLOUDFLARE_R2_ENDPOINT') }}"
   ## cronでの定期実行：なし
-  test_no_schdule:
-    user: no_schdule
+  test_no_schedule:
+    user: no_schedule
     command: rclone test makefile 1234 ${BACKUP_DATA_DIR}/test.txt
     restic:
-      repo_password: test_no_schdule_p@55w0rd
+      repo_password: test_no_schedule_p@55w0rd
   ## cronでのバックアップ処理実行時に標準出力の内容を破棄しメールを送信を抑制
   test_cron_job_suffix:
     user: cron_job_suffix
