@@ -46,7 +46,7 @@ provisioner:
   config_options:
     defaults:
       hash_behaviour: merge
-      result_format: yaml
+      callback_result_format: yaml
       allow_world_readable_tmpfiles: true
     ssh_connection:
       pipelining: true
