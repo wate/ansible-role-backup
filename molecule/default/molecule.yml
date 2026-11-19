@@ -8,8 +8,8 @@ platforms:
   - name: trixie
     groups:
       - family_debian
-    children:
-      - debian
+    # children:
+    #   - debian
     # driver:docker
     image: geerlingguy/docker-debian13-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
@@ -19,7 +19,7 @@ platforms:
     privileged: true
     pre_build_image: true
     # driver:vagrant
-    box: bento/debian-13
+    # box: bento/debian-13
     # memory: 1024
     # cpus: 1
   # - name: bookworm
@@ -57,18 +57,16 @@ provisioner:
 # verifier:
 #   name: ansible
 # scenario:
+#   ## cleanupとside_effectはドライバにプレイブックが無いため実行しません
 #   test_sequence:
 #     - dependency
-#     - cleanup
 #     - destroy
 #     - syntax
 #     - create
 #     - prepare
 #     - converge
 #     - idempotence
-#     - side_effect
 #     - verify
-#     - cleanup
 #     - destroy
 #   create_sequence:
 #     - dependency
@@ -76,7 +74,6 @@ provisioner:
 #     - prepare
 #   check_sequence:
 #     - dependency
-#     - cleanup
 #     - destroy
 #     - create
 #     - prepare
@@ -90,5 +87,4 @@ provisioner:
 #     - converge
 #   destroy_sequence:
 #     - dependency
-#     - cleanup
 #     - destroy

@@ -1,0 +1,4 @@
+---
+collections:
+  ## moleculeのdockerドライバで使用
+  - name: community.docker
