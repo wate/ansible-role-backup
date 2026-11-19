@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   role_name: backup
+  namespace: wate
   author: yoshiaki tanaka
   description: Setup backup setting
   license: Apache
